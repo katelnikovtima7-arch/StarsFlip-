@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>StarsFlip — монетка</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
             margin: 0;
@@ -315,7 +316,106 @@
         }
         .nav-icon { font-size: 1.2rem; }
         .nav-label { font-size: 0.6rem; color: #A0B4D0; }
-        .hidden { display: none;
+        .hidden { display: none; }
+        
+        /* Стили для профиля */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .profile-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2F9EFF, #8B9DC3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+        }
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .profile-info h3 {
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+        .profile-info p {
+            color: #5A6E8A;
+            font-size: 0.7rem;
+        }
+        .stats-card {
+            background: #1A2438;
+            border-radius: 24px;
+            padding: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+        }
+        .stat-card {
+            text-align: center;
+        }
+        .stat-card .value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #FFD966;
+        }
+        .stat-card .label {
+            font-size: 0.65rem;
+            color: #5A6E8A;
+        }
+        .referral-section {
+            background: #1A2438;
+            border-radius: 24px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .referral-title {
+            color: #FFD966;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+        }
+        .referral-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .referral-btn {
+            background: #2F9EFF;
+            border: none;
+            border-radius: 60px;
+            padding: 12px;
+            width: 100%;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .copy-btn {
+            background: #2A3A50;
+            border: none;
+            border-radius: 60px;
+            padding: 10px;
+            width: 100%;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+        }
+        .level-badge {
+            background: #2F9EFF20;
+            border: 1px solid #2F9EFF;
+            border-radius: 30px;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            color: #2F9EFF;
         }
     </style>
 </head>
@@ -398,6 +498,30 @@
     </div>
 </div>
 <script>
+    // ------------------- ИНИЦИАЛИЗАЦИЯ TELEGRAM WEBAPP -------------------
+    let tg = null;
+    let telegramUser = null;
+    let userAvatar = null;
+    let userName = "Игрок";
+    
+    // Пытаемся получить данные из Telegram
+    try {
+        if (window.Telegram && window.Telegram.WebApp) {
+            tg = window.Telegram.WebApp;
+            tg.ready();
+            tg.expand();
+            telegramUser = tg.initDataUnsafe?.user;
+            if (telegramUser) {
+                userName = telegramUser.first_name || telegramUser.username || "Игрок";
+                if (telegramUser.photo_url) {
+                    userAvatar = telegramUser.photo_url;
+                }
+            }
+        }
+    } catch(e) {
+        console.log("Telegram WebApp не доступен (работаем в браузере)");
+    }
+    
     // ------------------- ОСНОВНЫЕ ПАРАМЕТРЫ -------------------
     let balance = 50000;
     let currentRound = 1;
@@ -406,7 +530,84 @@
     let userChoice = "ОРЕЛ";
     const MAX_BET = 100000;
     const BASE_MULTIPLIER = 1.95;
-
+    
+    // Реферальная система
+    let referralCount = 0;
+    let referralEarnings = 0;
+    let myReferralCode = "";
+    let referralLink = "";
+    
+    // Генерация уникального кода пользователя (если нет)
+    function generateReferralCode() {
+        if (telegramUser && telegramUser.id) {
+            return "ref_" + telegramUser.id;
+        }
+        let saved = localStorage.getItem('starsflip_referral_code');
+        if (saved) return saved;
+        let newCode = "ref_" + Math.random().toString(36).substring(2, 10);
+        localStorage.setItem('starsflip_referral_code', newCode);
+        return newCode;
+    }
+    
+    // Создание реферальной ссылки
+    function createReferralLink() {
+        let code = myReferralCode;
+        // Если есть бот, подставь его username
+        let botUsername = "StarsFlipBot"; // ЗАМЕНИТЕ НА ВАШЕГО БОТА
+        return `https://t.me/${botUsername}?start=${code}`;
+    }
+    
+    // Загрузка реферальной статистики
+    function loadReferralStats() {
+        let saved = localStorage.getItem('starsflip_referral_stats');
+        if (saved) {
+            try {
+                let data = JSON.parse(saved);
+                referralCount = data.count || 0;
+                referralEarnings = data.earnings || 0;
+            } catch(e) {}
+        }
+    }
+    
+    // Сохранение реферальной статистики
+    function saveReferralStats() {
+        localStorage.setItem('starsflip_referral_stats', JSON.stringify({
+            count: referralCount,
+            earnings: referralEarnings
+        }));
+    }
+    
+    // Проверка реферального перехода (при запуске)
+    function checkReferral() {
+        if (tg && tg.initDataUnsafe?.start_param) {
+            let refCode = tg.initDataUnsafe.start_param;
+            if (refCode && refCode.startsWith('ref_')) {
+                // Здесь можно отправить запрос к боту, что кто-то перешёл
+                console.log("Переход по реферальной ссылке:", refCode);
+                // Пока просто добавим в статистику демо
+                let referrerCode = refCode;
+                localStorage.setItem('starsflip_referred_by', referrerCode);
+            }
+        }
+    }
+    
+    // Копирование ссылки
+    function copyReferralLink() {
+        let link = createReferralLink();
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(link);
+            showFloatingMessage("✅ Ссылка скопирована!", "#88FF88");
+        } else {
+            prompt("Скопируйте ссылку:", link);
+        }
+    }
+    
+    // Инициализация реферальной системы
+    myReferralCode = generateReferralCode();
+    loadReferralStats();
+    checkReferral();
+    referralLink = createReferralLink();
+    
     let riskActive = false;
     let currentRiskStep = 1;
     let currentRiskMultiplier = 1.95;
@@ -418,7 +619,8 @@
         multipliersList.push(parseFloat(mult.toFixed(2)));
         mult = mult * 1.95;
     }
-
+    
+    // DOM элементы
     const balanceEl = document.getElementById('balanceValue');
     const roundEl = document.getElementById('roundNum');
     const betInput = document.getElementById('betAmount');
@@ -435,7 +637,32 @@
     const choiceArea = document.querySelector('.choice-area');
     const betPanel = document.querySelector('.bet-panel');
     const multiplierStrip = document.getElementById('multiplierStrip');
-
+    
+    // Функция для отображения всплывающих сообщений (для рефералок)
+    let isMessageShowing = false;
+    function showFloatingMessage(text, color) {
+        if (isMessageShowing) return;
+        isMessageShowing = true;
+        const msg = document.createElement('div');
+        msg.style.position = 'fixed';
+        msg.style.top = '100px';
+        msg.style.left = '50%';
+        msg.style.transform = 'translateX(-50%)';
+        msg.style.backgroundColor = 'rgba(0,0,0,0.9)';
+        msg.style.color = color || '#FFD966';
+        msg.style.padding = '10px 20px';
+        msg.style.borderRadius = '30px';
+        msg.style.fontSize = '0.9rem';
+        msg.style.zIndex = '10000';
+        msg.style.fontWeight = 'bold';
+        msg.innerText = text;
+        document.body.appendChild(msg);
+        setTimeout(() => {
+            msg.remove();
+            isMessageShowing = false;
+        }, 1500);
+    }
+    
     function createMultiplierCircles() {
         multiplierStrip.innerHTML = '';
         for (let i = 0; i < 12; i++) {
@@ -454,7 +681,7 @@
     }
     createMultiplierCircles();
     const multiplierCircles = document.querySelectorAll('.multiplier-circle');
-
+    
     function updateMultiplierCircles() {
         for (let i = 0; i < multiplierCircles.length; i++) {
             if (i === currentRiskStep - 1) {
@@ -477,7 +704,7 @@
             wrapper.scrollTo({ left: Math.max(0, scrollLeft), behavior: 'smooth' });
         }
     }
-
+    
     function resetMultiplierCircles() {
         currentRiskStep = 1;
         for (let i = 0; i < multiplierCircles.length; i++) {
@@ -493,12 +720,12 @@
             }
         }
     }
-
+    
     function updateBalanceUI() {
         balanceEl.innerText = Math.floor(balance);
         saveGame();
     }
-
+    
     function addHistory(text, type) {
         const item = document.createElement('div');
         item.className = 'history-item';
@@ -510,7 +737,7 @@
         while (historyList.children.length > 12) historyList.removeChild(historyList.lastChild);
         saveGame();
     }
-
+    
     function updateBetUI() {
         if (bet < 1) bet = 1;
         if (bet > MAX_BET) bet = MAX_BET;
@@ -518,7 +745,7 @@
         betInput.value = bet;
         saveGame();
     }
-
+    
     function setChoice(choice) {
         userChoice = choice;
         document.querySelectorAll('.coin-choice').forEach(el => {
@@ -527,7 +754,7 @@
         });
         saveGame();
     }
-
+    
     function animateCoin(result) {
         mainCoinImg.classList.remove('coin-animation');
         void mainCoinImg.offsetHeight;
@@ -541,7 +768,7 @@
             mainCoinImg.classList.remove('coin-animation');
         }, 300);
     }
-
+    
     function resetRiskMode() {
         riskActive = false;
         actionButtons.style.display = 'none';
@@ -552,7 +779,7 @@
         resetMultiplierCircles();
         saveGame();
     }
-
+    
     function takeProfit() {
         if (!riskActive) return;
         const winAmount = currentRiskStake;
@@ -565,7 +792,7 @@
         roundEl.innerText = currentRound;
         saveGame();
     }
-
+    
     function riskFlip() {
         if (!riskActive) return;
         const result = Math.random() < 0.5 ? "ОРЕЛ" : "РЕШКА";
@@ -592,7 +819,7 @@
         }
         saveGame();
     }
-
+    
     function firstFlip() {
         if (bet > balance) {
             addHistory(`❌ Не хватает Stars`, 'loss');
@@ -626,7 +853,7 @@
         updateBetUI();
         saveGame();
     }
-
+    
     function makeBet() {
         if (riskActive) return;
         if (bet < 1 || bet > balance) {
@@ -635,10 +862,74 @@
         }
         firstFlip();
     }
-
+    
+    // ------------------- ПРОФИЛЬ С РЕФЕРАЛКАМИ -------------------
+    function renderProfileTab() {
+        showGameUI(false);
+        let avatarHtml = '';
+        if (userAvatar) {
+            avatarHtml = `<img src="${userAvatar}" alt="avatar">`;
+        } else {
+            let firstLetter = userName.charAt(0).toUpperCase();
+            avatarHtml = `<span style="font-size: 2rem;">${firstLetter}</span>`;
+        }
+        
+        dynamicContent.innerHTML = `
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    ${avatarHtml}
+                </div>
+                <div class="profile-info">
+                    <h3>${userName}</h3>
+                    <div class="level-badge">⭐ Уровень ${Math.floor(winStreak / 10) + 1}</div>
+                </div>
+            </div>
+            <div class="stats-card">
+                <div class="stat-card">
+                    <div class="value">${Math.floor(balance)}</div>
+                    <div class="label">БАЛАНС</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value">${winStreak}</div>
+                    <div class="label">ВИНСТРИК</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value">${currentRound}</div>
+                    <div class="label">РАУНДОВ</div>
+                </div>
+            </div>
+            <div class="referral-section">
+                <div class="referral-title">🤝 РЕФЕРАЛЫ</div>
+                <div class="referral-stats">
+                    <div class="stat-card">
+                        <div class="value">${referralCount}</div>
+                        <div class="label">ПРИГЛАШЕНО</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value">${referralEarnings}</div>
+                        <div class="label">ЗАРАБОТАНО ⭐</div>
+                    </div>
+                </div>
+                <button class="referral-btn" id="inviteFriendsBtn">🏆 ПРИГЛАСИТЬ ДРУЗЕЙ</button>
+                <button class="copy-btn" id="copyReferralBtn">📋 КОПИРОВАТЬ ССЫЛКУ</button>
+                <div style="font-size: 0.6rem; color: #5A6E8A; text-align: center; margin-top: 12px;">
+                    Приглашай друзей и получай 10% от их выигрышей!
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('inviteFriendsBtn')?.addEventListener('click', () => {
+            copyReferralLink();
+        });
+        document.getElementById('copyReferralBtn')?.addEventListener('click', () => {
+            copyReferralLink();
+        });
+    }
+    
+    // ------------------- ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК -------------------
     const navItems = document.querySelectorAll('.nav-item');
     let currentTab = 'coin';
-
+    
     function showGameUI(show) {
         if (show) {
             centerStats.style.display = 'flex';
@@ -667,7 +958,7 @@
             dynamicContent.style.display = 'flex';
         }
     }
-
+    
     function renderLeadersTab() {
         showGameUI(false);
         dynamicContent.innerHTML = `
@@ -684,27 +975,11 @@
             </div>
         `;
     }
-
-    function renderMyTab() {
-        showGameUI(false);
-        dynamicContent.innerHTML = `
-            <div style="display:flex; flex-direction:column; align-items:center; justify-content:flex-start; height:100%; gap:20px; padding-top:20px;">
-                <div style="font-size:3rem;">👤</div>
-                <div style="font-size:1.2rem; color:white;">Твой профиль</div>
-                <div style="background:#1A2438; padding:16px 24px; border-radius:30px; text-align:center;">
-                    <div>Баланс: ${Math.floor(balance)} ⭐</div>
-                    <div>ID: ${Math.floor(Math.random()*1000000)}</div>
-                    <div>Винстрик: ${winStreak}</div>
-                    <div>Раундов: ${currentRound}</div>
-                </div>
-            </div>
-        `;
-    }
-
+    
     function renderCoinTab() {
         showGameUI(true);
     }
-
+    
     function switchTab(tab) {
         if (riskActive && tab !== 'coin') {
             addHistory(`⚠️ Сначала закончи игру (забери или прокрути)`, 'loss');
@@ -718,13 +993,14 @@
         
         if (tab === 'coin') renderCoinTab();
         else if (tab === 'leaders') renderLeadersTab();
-        else if (tab === 'my') renderMyTab();
+        else if (tab === 'my') renderProfileTab();
     }
-
+    
     navItems.forEach(item => {
         item.addEventListener('click', () => switchTab(item.dataset.tab));
     });
-
+    
+    // ------------------- СОХРАНЕНИЕ -------------------
     function saveGame() {
         const save = {
             balance: balance,
@@ -735,11 +1011,14 @@
             riskActive: riskActive,
             currentRiskStep: currentRiskStep,
             currentRiskMultiplier: currentRiskMultiplier,
-            currentRiskStake: currentRiskStake
+            currentRiskStake: currentRiskStake,
+            referralCount: referralCount,
+            referralEarnings: referralEarnings
         };
         localStorage.setItem('StarsFlipSave', JSON.stringify(save));
+        saveReferralStats();
     }
-
+    
     function loadGame() {
         const saved = localStorage.getItem('StarsFlipSave');
         if (saved) {
@@ -754,6 +1033,8 @@
                 currentRiskStep = data.currentRiskStep ?? 1;
                 currentRiskMultiplier = data.currentRiskMultiplier ?? 1.95;
                 currentRiskStake = data.currentRiskStake ?? 0;
+                referralCount = data.referralCount ?? 0;
+                referralEarnings = data.referralEarnings ?? 0;
                 updateBalanceUI();
                 updateBetUI();
                 roundEl.innerText = currentRound;
@@ -773,7 +1054,8 @@
         mainCoinImg.src = 'IMG_0944-photos.png';
         renderCoinTab();
     }
-
+    
+    // ------------------- СОБЫТИЯ -------------------
     document.getElementById('decBet').addEventListener('click', () => {
         bet = Math.max(1, bet - 10);
         updateBetUI();
@@ -790,20 +1072,25 @@
         if (bet > balance) bet = balance;
         updateBetUI();
     });
-
+    
     document.querySelectorAll('.coin-choice').forEach(btn => {
         btn.addEventListener('click', () => setChoice(btn.dataset.side));
     });
-
+    
     playBtn.addEventListener('click', makeBet);
     takeBtn.addEventListener('click', takeProfit);
     riskBtn.addEventListener('click', riskFlip);
-
+    
     document.getElementById('howBtn').addEventListener('click', () => {
         alert(`⭐ STARSFLIP — игра на монетке\n\nПРАВИЛА:\n1. Сделай ставку и выбери ОРЁЛ или РЕШКА\n2. Если угадал → можешь ЗАБРАТЬ или КРУТИТЬ ДАЛЬШЕ\n3. Всего 12 шагов, максимальный множитель x${multipliersList[11]}\n4. При проигрыше теряешь всё\n\nИграй честно, удачи!`);
     });
-
+    
     loadGame();
+    
+    // Запуск Telegram WebApp
+    if (tg) {
+        tg.ready();
+    }
 </script>
 </body>
 </html>
