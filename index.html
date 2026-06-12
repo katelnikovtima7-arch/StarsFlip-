@@ -444,8 +444,8 @@
     checkReferral();
     
     let riskActive = false;
-    let currentRiskStep = 1;
-    let currentRiskMultiplier = 1.95;
+    let currentRiskStep = 0;
+    let currentRiskMultiplier = 1.0;
     let currentRiskStake = 0;
     
     let multipliersList = [];
@@ -516,13 +516,13 @@
     
     function updateMultiplierCircles() {
         for (let i = 0; i < multiplierCircles.length; i++) {
-            if (i === currentRiskStep - 1) {
+            if (i === currentRiskStep) {
                 multiplierCircles[i].classList.add('active');
-                multiplierCircles[i].innerText = `x${multipliersList[i]}`;
-            } else if (i === currentRiskStep) {
                 multiplierCircles[i].innerText = `x${multipliersList[i]}`;
             } else if (i < currentRiskStep) {
                 multiplierCircles[i].classList.add('active');
+                multiplierCircles[i].innerText = `x${multipliersList[i]}`;
+            } else if (i === currentRiskStep + 1) {
                 multiplierCircles[i].innerText = `x${multipliersList[i]}`;
             } else {
                 multiplierCircles[i].classList.remove('active');
@@ -531,12 +531,12 @@
         }
         if (kefValue) {
             let displayMult = currentRiskMultiplier;
-            if (!riskActive && currentRiskStep === 1) displayMult = 1.95;
-            if (riskActive && currentRiskStep >= 2) displayMult = currentRiskMultiplier;
+            if (!riskActive && currentRiskStep === 0) displayMult = 1.95;
+            if (riskActive && currentRiskStep >= 1) displayMult = currentRiskMultiplier;
             kefValue.innerText = `x${displayMult.toFixed(2)}`;
         }
         const wrapper = document.querySelector('.multiplier-strip-wrapper');
-        const targetCircle = multiplierCircles[currentRiskStep - 1];
+        const targetCircle = multiplierCircles[currentRiskStep];
         if (targetCircle && wrapper) {
             const scrollLeft = targetCircle.offsetLeft - wrapper.offsetWidth / 2 + targetCircle.offsetWidth / 2;
             wrapper.scrollTo({ left: Math.max(0, scrollLeft), behavior: 'smooth' });
@@ -544,13 +544,12 @@
     }
     
     function resetMultiplierCircles() {
-        currentRiskStep = 1;
+        currentRiskStep = 0;
         for (let i = 0; i < multiplierCircles.length; i++) {
             if (i === 0) {
                 multiplierCircles[i].classList.add('active');
                 multiplierCircles[i].innerText = `x${multipliersList[0]}`;
             } else if (i === 1) {
-                multiplierCircles[i].classList.remove('active');
                 multiplierCircles[i].innerText = `x${multipliersList[1]}`;
             } else {
                 multiplierCircles[i].classList.remove('active');
@@ -624,9 +623,9 @@
         riskActive = false;
         actionButtons.style.display = 'none';
         playBtn.style.display = 'block';
-        currentRiskMultiplier = 1.95;
+        currentRiskMultiplier = 1.0;
         currentRiskStake = 0;
-        currentRiskStep = 1;
+        currentRiskStep = 0;
         resetMultiplierCircles();
         saveGame();
     }
@@ -650,13 +649,13 @@
         await animateCoin(result);
         if (isWin) {
             currentRiskStep++;
-            if (currentRiskStep <= 12) {
-                currentRiskMultiplier = multipliersList[currentRiskStep - 1];
+            if (currentRiskStep <= 11) {
+                currentRiskMultiplier = multipliersList[currentRiskStep];
                 currentRiskStake = Math.floor(bet * currentRiskMultiplier);
                 updateMultiplierCircles();
                 addHistory('win');
                 winStreak++;
-                if (currentRiskStep >= 12) addHistory('win');
+                if (currentRiskStep >= 11) addHistory('win');
             }
         } else {
             addHistory('loss');
@@ -677,8 +676,8 @@
         const isWin = result === userChoice;
         await animateCoin(result);
         if (isWin) {
-            currentRiskStep = 2;
-            currentRiskMultiplier = multipliersList[1];
+            currentRiskStep = 0;
+            currentRiskMultiplier = multipliersList[0];
             currentRiskStake = Math.floor(bet * currentRiskMultiplier);
             riskActive = true;
             actionButtons.style.display = 'flex';
@@ -708,7 +707,7 @@
         firstFlip();
     }
     
-    // ========== ПРОФИЛЬ (НИЧЕГО НЕ ЛИСТАЕТСЯ) ==========
+    // ========== ПРОФИЛЬ ==========
     function renderProfileTab() {
         centerStats.style.display = 'none';
         mainCoinDiv.style.display = 'none';
@@ -724,7 +723,6 @@
         dynamicContent.style.padding = '16px';
         dynamicContent.style.gap = '16px';
         dynamicContent.style.overflow = 'hidden';
-        dynamicContent.style.height = 'auto';
         
         let level = Math.floor(winStreak / 10) + 1;
         
@@ -871,8 +869,8 @@
                 bet = data.bet ?? 100;
                 userChoice = data.userChoice ?? "ОРЕЛ";
                 riskActive = data.riskActive ?? false;
-                currentRiskStep = data.currentRiskStep ?? 1;
-                currentRiskMultiplier = data.currentRiskMultiplier ?? 1.95;
+                currentRiskStep = data.currentRiskStep ?? 0;
+                currentRiskMultiplier = data.currentRiskMultiplier ?? 1.0;
                 currentRiskStake = data.currentRiskStake ?? 0;
                 referralCount = data.referralCount ?? 0;
                 referralEarnings = data.referralEarnings ?? 0;
@@ -880,7 +878,7 @@
                 updateBetUI();
                 roundEl.innerText = currentRound;
                 setChoice(userChoice);
-                if (riskActive && currentRiskStep > 1) {
+                if (riskActive && currentRiskStep >= 0) {
                     actionButtons.style.display = 'flex';
                     playBtn.style.display = 'none';
                     updateMultiplierCircles();
