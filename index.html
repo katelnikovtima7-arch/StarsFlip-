@@ -13,7 +13,6 @@
             user-select: none;
             -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
-            user-select: none;
         }
         body {
             background: #0A0F1A;
@@ -59,9 +58,9 @@
         .balance-top {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             background: #1A2438;
-            padding: 6px 12px;
+            padding: 6px 14px;
             border-radius: 40px;
         }
         .balance-top img {
@@ -709,7 +708,7 @@
         firstFlip();
     }
     
-    // ========== ПРОФИЛЬ ==========
+    // ========== ПРОФИЛЬ (НИЧЕГО НЕ ЛИСТАЕТСЯ) ==========
     function renderProfileTab() {
         centerStats.style.display = 'none';
         mainCoinDiv.style.display = 'none';
@@ -724,7 +723,8 @@
         dynamicContent.style.flexDirection = 'column';
         dynamicContent.style.padding = '16px';
         dynamicContent.style.gap = '16px';
-        dynamicContent.style.overflowY = 'auto';
+        dynamicContent.style.overflow = 'hidden';
+        dynamicContent.style.height = 'auto';
         
         let level = Math.floor(winStreak / 10) + 1;
         
@@ -738,36 +738,19 @@
             </div>
             
             <div style="display: flex; justify-content: space-around; background: #1A2438; border-radius: 28px; padding: 20px 16px;">
-                <div style="text-align: center;">
-                    <div style="font-size: 1.5rem; font-weight: 700; color: white;">${Math.floor(balance)}</div>
-                    <div style="font-size: 0.55rem; color: #5A6E8A; letter-spacing: 1px;">БАЛАНС</div>
-                </div>
-                <div style="text-align: center;">
-                    <div style="font-size: 1.5rem; font-weight: 700; color: white;">${winStreak}</div>
-                    <div style="font-size: 0.55rem; color: #5A6E8A; letter-spacing: 1px;">ВИНСТРИК</div>
-                </div>
-                <div style="text-align: center;">
-                    <div style="font-size: 1.5rem; font-weight: 700; color: white;">${currentRound}</div>
-                    <div style="font-size: 0.55rem; color: #5A6E8A; letter-spacing: 1px;">РАУНДОВ</div>
-                </div>
+                <div style="text-align: center;"><div style="font-size: 1.5rem; font-weight: 700; color: white;">${Math.floor(balance)}</div><div style="font-size: 0.55rem; color: #5A6E8A;">БАЛАНС</div></div>
+                <div style="text-align: center;"><div style="font-size: 1.5rem; font-weight: 700; color: white;">${winStreak}</div><div style="font-size: 0.55rem; color: #5A6E8A;">ВИНСТРИК</div></div>
+                <div style="text-align: center;"><div style="font-size: 1.5rem; font-weight: 700; color: white;">${currentRound}</div><div style="font-size: 0.55rem; color: #5A6E8A;">РАУНДОВ</div></div>
             </div>
             
             <div style="background: #1A2438; border-radius: 28px; padding: 20px;">
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <span style="color: #2F9EFF; font-size: 0.9rem; font-weight: 600; letter-spacing: 1px;">🤝 РЕФЕРАЛЫ</span>
-                </div>
+                <div style="text-align: center; margin-bottom: 20px;"><span style="color: #2F9EFF; font-size: 0.9rem; font-weight: 600;">🤝 РЕФЕРАЛЫ</span></div>
                 <div style="display: flex; justify-content: space-around; margin-bottom: 24px;">
-                    <div style="text-align: center;">
-                        <div style="font-size: 1.3rem; font-weight: 700; color: #FFD966;">${referralCount}</div>
-                        <div style="font-size: 0.55rem; color: #5A6E8A;">ПРИГЛАШЕНО</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 1.3rem; font-weight: 700; color: #FFD966;">${referralEarnings}</div>
-                        <div style="font-size: 0.55rem; color: #5A6E8A;">ЗАРАБОТАНО ⭐</div>
-                    </div>
+                    <div style="text-align: center;"><div style="font-size: 1.3rem; font-weight: 700; color: #FFD966;">${referralCount}</div><div style="font-size: 0.55rem; color: #5A6E8A;">ПРИГЛАШЕНО</div></div>
+                    <div style="text-align: center;"><div style="font-size: 1.3rem; font-weight: 700; color: #FFD966;">${referralEarnings}</div><div style="font-size: 0.55rem; color: #5A6E8A;">ЗАРАБОТАНО ⭐</div></div>
                 </div>
-                <button class="ref-btn-big" id="inviteBtn" style="background: #2F9EFF; border: none; border-radius: 60px; padding: 14px; width: 100%; font-weight: bold; font-size: 0.9rem; color: white; cursor: pointer; margin-bottom: 10px;">🏆 ПРИГЛАСИТЬ ДРУЗЕЙ</button>
-                <button class="copy-btn-big" id="copyLinkBtn" style="background: #2A3A50; border: none; border-radius: 60px; padding: 12px; width: 100%; font-weight: bold; font-size: 0.85rem; color: white; cursor: pointer;">📋 КОПИРОВАТЬ ССЫЛКУ</button>
+                <button id="inviteBtn" style="background: #2F9EFF; border: none; border-radius: 60px; padding: 14px; width: 100%; font-weight: bold; font-size: 0.9rem; color: white; cursor: pointer; margin-bottom: 10px;">🏆 ПРИГЛАСИТЬ ДРУЗЕЙ</button>
+                <button id="copyLinkBtn" style="background: #2A3A50; border: none; border-radius: 60px; padding: 12px; width: 100%; font-weight: bold; font-size: 0.85rem; color: white; cursor: pointer;">📋 КОПИРОВАТЬ ССЫЛКУ</button>
                 <div style="font-size: 0.55rem; color: #5A6E8A; text-align: center; margin-top: 14px;">Приглашай друзей и получай 10% от их выигрышей!</div>
             </div>
         `;
@@ -788,6 +771,7 @@
         dynamicContent.style.display = 'flex';
         dynamicContent.style.flexDirection = 'column';
         dynamicContent.style.padding = '16px';
+        dynamicContent.style.overflow = 'hidden';
         dynamicContent.innerHTML = `
             <div style="background:#1A2438; border-radius:28px; padding:30px 20px; text-align:center;">
                 <div style="font-size:3rem;">🎁</div>
@@ -821,18 +805,11 @@
         historySection.style.display = 'none';
         document.querySelector('.multiplier-strip-wrapper').style.display = 'none';
         dynamicContent.style.display = 'flex';
+        dynamicContent.style.alignItems = 'center';
+        dynamicContent.style.justifyContent = 'center';
+        dynamicContent.style.overflow = 'hidden';
         dynamicContent.innerHTML = `
-            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; gap:20px;">
-                <div style="font-size:3rem;">🏆</div>
-                <div style="font-size:1.2rem; color:white;">Таблица лидеров</div>
-                <div style="background:#1A2438; padding:20px; border-radius:30px; width:100%;">
-                    <div>1. Игрок_01 — 25000 ⭐</div>
-                    <div>2. Игрок_02 — 18000 ⭐</div>
-                    <div>3. Игрок_03 — 12000 ⭐</div>
-                    <div>4. Игрок_04 — 8900 ⭐</div>
-                    <div>5. Игрок_05 — 5400 ⭐</div>
-                </div>
-            </div>
+            <div style="text-align:center;"><div style="font-size:3rem;">🏆</div><div style="font-size:1.2rem; color:white; margin-top:12px;">Таблица лидеров</div><div style="background:#1A2438; padding:20px; border-radius:30px; width:100%; margin-top:20px;"><div>1. Игрок_01 — 25000 ⭐</div><div>2. Игрок_02 — 18000 ⭐</div><div>3. Игрок_03 — 12000 ⭐</div><div>4. Игрок_04 — 8900 ⭐</div><div>5. Игрок_05 — 5400 ⭐</div></div></div>
         `;
     }
     
@@ -853,7 +830,6 @@
         }
     }
     
-    // ========== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ==========
     const navItems = document.querySelectorAll('.nav-item');
     let currentTab = 'coin';
     
