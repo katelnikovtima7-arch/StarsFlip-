@@ -657,6 +657,9 @@
                 if (currentRiskStep >= 11) addHistory('win');
             }
         } else {
+            // ПРОИГРЫШ — СПИСЫВАЕМ ТЕКУЩУЮ СТАВКУ
+            balance -= currentRiskStake;
+            updateBalanceUI();
             addHistory('loss');
             winStreak = 0;
             resetRiskMode();
