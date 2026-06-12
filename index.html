@@ -12,6 +12,7 @@
             box-sizing: border-box;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
         }
         body {
             background: #0A0F1A;
@@ -29,12 +30,14 @@
             display: flex;
             flex-direction: column;
             margin: 0 auto;
+            overflow: hidden;
         }
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px;
+            padding: 20px 20px 8px 20px;
+            flex-shrink: 0;
         }
         .logo {
             font-size: 1.2rem;
@@ -57,17 +60,27 @@
             align-items: center;
             gap: 6px;
             background: #1A2438;
-            padding: 6px 12px;
+            padding: 6px 14px;
             border-radius: 40px;
         }
-        .balance-top img { width: 24px; height: 24px; }
-        .balance-top .amount { font-size: 1.2rem; font-weight: 700; color: #FFD966; }
-        
+        .balance-top img {
+            width: 24px;
+            height: 24px;
+        }
+        .balance-top .amount {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #FFD966;
+        }
         .multiplier-strip-wrapper {
             overflow-x: auto;
             overflow-y: hidden;
-            padding: 16px;
+            padding: 16px 16px 8px 16px;
+            flex-shrink: 0;
             scrollbar-width: none;
+            -ms-overflow-style: none;
+            mask-image: linear-gradient(to right, black 0%, black 85%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to right, black 0%, black 85%, transparent 100%);
         }
         .multiplier-strip-wrapper::-webkit-scrollbar { display: none; }
         .multiplier-strip {
@@ -91,36 +104,52 @@
         }
         .multiplier-circle.active {
             background: #2F9EFF;
+            border-color: #2F9EFF;
             color: white;
+            box-shadow: 0 0 8px #2f9eff;
         }
-        
         .center-stats {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 40px;
-            padding: 10px;
+            padding: 10px 16px;
+            flex-shrink: 0;
         }
-        .stat-item { text-align: center; }
-        .stat-item .value { font-size: 1.5rem; font-weight: 700; color: white; }
-        .stat-item .label { font-size: 0.6rem; color: #5A6E8A; }
-        
-        .main-coin { text-align: center; padding: 10px; }
-        .main-coin img { width: 120px; height: 120px; transition: transform 0.2s; }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-item .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+        .stat-item .label {
+            font-size: 0.6rem;
+            color: #5A6E8A;
+        }
+        .main-coin { text-align: center; }
+        .main-coin img {
+            width: 120px;
+            height: 120px;
+            transition: transform 0.2s ease;
+            filter: drop-shadow(0 0 10px #2f9eff60);
+            pointer-events: none;
+        }
         .coin-animation {
-            animation: flip 0.3s ease-in-out;
+            animation: coinFlipAnim 0.3s ease-in-out;
         }
-        @keyframes flip {
+        @keyframes coinFlipAnim {
             0% { transform: scale(0.8) rotateY(0deg); opacity: 0.5; }
             50% { transform: scale(1.1) rotateY(180deg); }
             100% { transform: scale(1) rotateY(360deg); opacity: 1; }
         }
-        
         .choice-area {
             display: flex;
             justify-content: center;
             gap: 30px;
-            padding: 16px;
+            padding: 16px 20px;
+            flex-shrink: 0;
         }
         .coin-choice {
             background: #1A2438;
@@ -138,9 +167,9 @@
         .coin-choice img { width: 24px; height: 24px; pointer-events: none; }
         .coin-choice.selected {
             background: #2F9EFF;
+            border-color: #2F9EFF;
             color: white;
         }
-        
         .bet-panel {
             background: #0F1626;
             margin: 8px 16px;
@@ -149,6 +178,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-shrink: 0;
         }
         .bet-label { color: #7F8FA4; font-size: 0.75rem; }
         .bet-controls { display: flex; align-items: center; gap: 10px; }
@@ -160,9 +190,10 @@
             font-weight: bold;
             width: 80px;
             text-align: center;
-            padding: 8px;
+            padding: 8px 0;
             border-radius: 40px;
         }
+        .bet-input:focus { outline: none; box-shadow: 0 0 0 1px #2F9EFF; }
         .bet-btn {
             background: #2A3A50;
             border: none;
@@ -174,11 +205,11 @@
             color: white;
             cursor: pointer;
         }
-        
         .action-buttons {
             display: flex;
             gap: 12px;
             margin: 8px 16px;
+            flex-shrink: 0;
         }
         .take-btn, .risk-btn {
             flex: 1;
@@ -191,7 +222,6 @@
         }
         .take-btn { background: #2F9EFF; color: white; }
         .risk-btn { background: #2A3A50; color: white; }
-        
         .play-btn {
             background: #2F9EFF;
             border: none;
@@ -202,42 +232,49 @@
             color: white;
             cursor: pointer;
             margin: 8px 16px;
+            flex-shrink: 0;
         }
-        
         .history-section {
             background: #0F1626;
             margin: 8px 16px;
             border-radius: 20px;
             padding: 8px 12px;
+            flex-shrink: 0;
             height: 100px;
             overflow-y: auto;
         }
-        .history-title { font-size: 0.6rem; color: #5A6E8A; margin-bottom: 6px; }
-        .history-list { display: flex; flex-direction: column; gap: 4px; }
+        .history-title {
+            font-size: 0.6rem;
+            color: #5A6E8A;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
         .history-item {
             background: #1A2438;
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 0.7rem;
             font-weight: 500;
+            color: #A0B4D0;
             text-align: center;
         }
-        .history-item.win { background: #1E6B3E; color: #ccffcc; }
-        .history-item.loss { background: #8B3A3A; color: #ffcccc; }
-        .history-item.take { background: #CC8800; color: white; }
-        
         .dynamic-content {
             flex: 1;
             display: none;
             overflow-y: auto;
         }
-        
         .bottom-nav {
             display: flex;
             justify-content: space-around;
             background: #0A0F1A;
             border-top: 1px solid #1A2438;
             padding: 10px 16px 20px;
+            flex-shrink: 0;
         }
         .nav-item {
             display: flex;
@@ -360,17 +397,18 @@
     let bet = 100;
     let userChoice = "ОРЕЛ";
     const MAX_BET = 100000;
-    const MULTIPLIER = 1.95;
+    const BASE_MULTIPLIER = 1.95;
     
     let riskActive = false;
-    let currentRiskStake = 0;      // текущая сумма в риск-режиме
-    let currentRiskStep = 0;        // 0 = первый выигрыш, 1 = второй и т.д.
+    let currentRiskStep = 0;
+    let currentRiskMultiplier = 1.95;
+    let currentRiskStake = 0;
     
     let multipliersList = [];
-    let mult = MULTIPLIER;
+    let mult = 1.95;
     for (let i = 0; i < 12; i++) {
         multipliersList.push(parseFloat(mult.toFixed(2)));
-        mult = mult * MULTIPLIER;
+        mult = mult * 1.95;
     }
     
     // ---------- РЕФЕРАЛЫ ----------
@@ -445,10 +483,10 @@
             }
         }
         if (kefValue) {
-            let displayMult = currentRiskStep === 0 ? MULTIPLIER : multipliersList[currentRiskStep];
+            let displayMult = currentRiskMultiplier;
+            if (!riskActive) displayMult = BASE_MULTIPLIER;
             kefValue.innerText = `x${displayMult.toFixed(2)}`;
         }
-        // скролл к текущему кружку
         const wrapper = document.querySelector('.multiplier-strip-wrapper');
         const targetCircle = multiplierCircles[currentRiskStep];
         if (targetCircle && wrapper) {
@@ -479,22 +517,25 @@
         setTimeout(() => { msg.remove(); isMessageShowing = false; }, 1500);
     }
     
-    function addHistory(type, amount) {
+    function addHistory(type) {
         const item = document.createElement('div');
         item.className = 'history-item';
         if (type === 'win') {
-            item.innerText = `ПОБЕДА +${amount} ⭐`;
-            item.classList.add('win');
+            item.innerText = 'ПОБЕДА';
+            item.style.backgroundColor = '#1E6B3E';
+            item.style.color = '#ccffcc';
         } else if (type === 'loss') {
-            item.innerText = `ПРОИГРЫШ -${amount} ⭐`;
-            item.classList.add('loss');
+            item.innerText = 'ПРОИГРЫШ';
+            item.style.backgroundColor = '#8B3A3A';
+            item.style.color = '#ffcccc';
         } else if (type === 'take') {
-            item.innerText = `ЗАБРАНО +${amount} ⭐`;
-            item.classList.add('take');
+            item.innerText = 'ЗАБРАНО';
+            item.style.backgroundColor = '#CC8800';
+            item.style.color = '#ffffff';
         } else if (type === 'insufficient') {
             item.innerText = 'ПОПОЛНИТЕ БАЛАНС';
-            item.classList.add('loss');
             item.style.backgroundColor = '#4A5568';
+            item.style.color = '#cbd5e0';
         }
         historyList.prepend(item);
         while (historyList.children.length > 12) historyList.removeChild(historyList.lastChild);
@@ -540,6 +581,7 @@
         riskActive = false;
         actionButtons.style.display = 'none';
         playBtn.style.display = 'block';
+        currentRiskMultiplier = BASE_MULTIPLIER;
         currentRiskStake = 0;
         currentRiskStep = 0;
         updateMultiplierCircles();
@@ -550,7 +592,7 @@
         if (!riskActive) return;
         balance += currentRiskStake;
         updateBalanceUI();
-        addHistory('take', currentRiskStake);
+        addHistory('take');
         resetRiskMode();
         currentRound++;
         roundEl.innerText = currentRound;
@@ -566,17 +608,15 @@
         await animateCoin(result);
         
         if (isWin) {
-            // ВЫИГРЫШ в риск-режиме
             currentRiskStep++;
-            currentRiskStake = Math.floor(bet * multipliersList[currentRiskStep]);
+            currentRiskMultiplier = multipliersList[currentRiskStep];
+            currentRiskStake = Math.floor(bet * currentRiskMultiplier);
             updateMultiplierCircles();
-            addHistory('win', currentRiskStake);
+            addHistory('win');
             winStreak++;
-            updateBalanceUI();
-            showFloatingMessage(`🎉 Победа! Теперь x${multipliersList[currentRiskStep].toFixed(2)} — ${currentRiskStake} ⭐`, "#88FF88");
+            showFloatingMessage(`🎉 Победа! x${currentRiskMultiplier.toFixed(2)} — ${currentRiskStake} ⭐`, "#88FF88");
         } else {
-            // ПРОИГРЫШ в риск-режиме — СПИСЫВАЕМ ВСЁ
-            addHistory('loss', currentRiskStake);
+            addHistory('loss');
             winStreak = 0;
             resetRiskMode();
             currentRound++;
@@ -588,7 +628,7 @@
     
     async function firstFlip() {
         if (bet > balance) {
-            addHistory('insufficient', 0);
+            addHistory('insufficient');
             showFloatingMessage("❌ Не хватает Stars!", "#FF8888");
             return;
         }
@@ -598,28 +638,26 @@
         await animateCoin(result);
         
         if (isWin) {
-            // ПЕРВЫЙ ВЫИГРЫШ
             currentRiskStep = 0;
-            currentRiskStake = Math.floor(bet * MULTIPLIER);
+            currentRiskMultiplier = BASE_MULTIPLIER;
+            currentRiskStake = Math.floor(bet * BASE_MULTIPLIER);
             riskActive = true;
             actionButtons.style.display = 'flex';
             playBtn.style.display = 'none';
             updateMultiplierCircles();
-            addHistory('win', currentRiskStake);
+            addHistory('win');
             winStreak++;
-            updateBalanceUI();
             showFloatingMessage(`🎉 Победа! +${currentRiskStake} ⭐`, "#88FF88");
         } else {
-            // ПРОИГРЫШ — СПИСЫВАЕМ СТАВКУ
             balance -= bet;
             updateBalanceUI();
-            addHistory('loss', bet);
+            addHistory('loss');
             winStreak = 0;
             currentRound++;
             roundEl.innerText = currentRound;
             showFloatingMessage(`💔 Проигрыш! -${bet} ⭐`, "#FF8888");
             if (balance <= 0) {
-                addHistory('insufficient', 0);
+                addHistory('insufficient');
                 showFloatingMessage("💀 Банкрот! Обновите страницу", "#FF8888");
                 playBtn.disabled = true;
             }
@@ -631,7 +669,7 @@
     function makeBet() {
         if (riskActive) return;
         if (bet < 1 || bet > balance) {
-            addHistory('insufficient', 0);
+            addHistory('insufficient');
             showFloatingMessage("⚠️ Некорректная ставка", "#FF8888");
             return;
         }
@@ -653,6 +691,7 @@
         dynamicContent.style.flexDirection = 'column';
         dynamicContent.style.padding = '16px';
         dynamicContent.style.gap = '16px';
+        dynamicContent.style.overflow = 'hidden';
         
         let level = Math.floor(winStreak / 10) + 1;
         
@@ -791,7 +830,7 @@
     function saveGame() {
         localStorage.setItem('StarsFlipSave', JSON.stringify({
             balance, currentRound, winStreak, bet, userChoice,
-            riskActive, currentRiskStake, currentRiskStep,
+            riskActive, currentRiskStep, currentRiskMultiplier, currentRiskStake,
             referralCount, referralEarnings
         }));
     }
@@ -807,8 +846,9 @@
                 bet = data.bet ?? 100;
                 userChoice = data.userChoice ?? "ОРЕЛ";
                 riskActive = data.riskActive ?? false;
-                currentRiskStake = data.currentRiskStake ?? 0;
                 currentRiskStep = data.currentRiskStep ?? 0;
+                currentRiskMultiplier = data.currentRiskMultiplier ?? 1.95;
+                currentRiskStake = data.currentRiskStake ?? 0;
                 referralCount = data.referralCount ?? 0;
                 referralEarnings = data.referralEarnings ?? 0;
                 updateBalanceUI();
@@ -819,8 +859,6 @@
                     actionButtons.style.display = 'flex';
                     playBtn.style.display = 'none';
                     updateMultiplierCircles();
-                } else {
-                    resetRiskMode();
                 }
             } catch(e) {}
         }
