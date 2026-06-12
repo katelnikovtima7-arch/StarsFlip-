@@ -265,7 +265,7 @@
         }
         .profile-stats-row {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-around;
             background: #1A2438;
             border-radius: 28px;
             padding: 20px 16px;
@@ -666,11 +666,16 @@
     }
     
     function animateCoin(result) {
-        mainCoinImg.classList.remove('coin-animation');
-        void mainCoinImg.offsetHeight;
-        mainCoinImg.classList.add('coin-animation');
-        mainCoinImg.src = result === 'ОРЕЛ' ? 'IMG_0944-photos.png' : 'IMG_0945-photos.png';
-        setTimeout(() => mainCoinImg.classList.remove('coin-animation'), 300);
+        return new Promise((resolve) => {
+            mainCoinImg.classList.remove('coin-animation');
+            void mainCoinImg.offsetHeight;
+            mainCoinImg.classList.add('coin-animation');
+            mainCoinImg.src = result === 'ОРЕЛ' ? 'IMG_0944-photos.png' : 'IMG_0945-photos.png';
+            setTimeout(() => {
+                mainCoinImg.classList.remove('coin-animation');
+                resolve();
+            }, 300);
+        });
     }
     
     function resetRiskMode() {
@@ -696,11 +701,12 @@
         saveGame();
     }
     
-    function riskFlip() {
+    async function riskFlip() {
         if (!riskActive) return;
         const result = Math.random() < 0.5 ? "ОРЕЛ" : "РЕШКА";
         const isWin = result === userChoice;
-        animateCoin(result);
+        await animateCoin(result);
+        await new Promise(resolve => setTimeout(resolve, 800));
         if (isWin) {
             currentRiskStep++;
             if (currentRiskStep <= 12) {
@@ -710,6 +716,7 @@
                 addHistory('win');
                 winStreak++;
                 if (currentRiskStep >= 12) addHistory('win');
+                showFloatingMessage(`ПОБЕДА! +${currentRiskStake} ⭐`, "#88FF88");
             }
         } else {
             addHistory('loss');
@@ -717,18 +724,21 @@
             resetRiskMode();
             currentRound++;
             roundEl.innerText = currentRound;
+            showFloatingMessage(`ПРОИГРЫШ! -${currentRiskStake} ⭐`, "#FF8888");
         }
         saveGame();
     }
     
-    function firstFlip() {
+    async function firstFlip() {
         if (bet > balance) {
             addHistory('loss');
+            showFloatingMessage("Не хватает Stars!", "#FF8888");
             return;
         }
         const result = Math.random() < 0.5 ? "ОРЕЛ" : "РЕШКА";
         const isWin = result === userChoice;
-        animateCoin(result);
+        await animateCoin(result);
+        await new Promise(resolve => setTimeout(resolve, 800));
         if (isWin) {
             currentRiskStep = 2;
             currentRiskMultiplier = multipliersList[1];
@@ -739,6 +749,7 @@
             updateMultiplierCircles();
             addHistory('win');
             winStreak++;
+            showFloatingMessage(`ПОБЕДА! +${currentRiskStake} ⭐`, "#88FF88");
         } else {
             balance -= bet;
             updateBalanceUI();
@@ -746,6 +757,7 @@
             winStreak = 0;
             currentRound++;
             roundEl.innerText = currentRound;
+            showFloatingMessage(`ПРОИГРЫШ! -${bet} ⭐`, "#FF8888");
             if (balance <= 0) addHistory('loss');
         }
         updateBetUI();
@@ -756,6 +768,7 @@
         if (riskActive) return;
         if (bet < 1 || bet > balance) {
             addHistory('loss');
+            showFloatingMessage("Некорректная ставка", "#FF8888");
             return;
         }
         firstFlip();
@@ -775,8 +788,6 @@
         dynamicContent.style.display = 'flex';
         dynamicContent.style.flexDirection = 'column';
         dynamicContent.style.padding = '16px';
-        
-        let level = Math.floor(winStreak / 10) + 1;
         
         dynamicContent.innerHTML = `
             <div class="profile-stats-row">
@@ -866,7 +877,7 @@
     
     function switchTab(tab) {
         if (riskActive && tab !== 'coin') {
-            addHistory('loss');
+            showFloatingMessage("Сначала закончи игру!", "#FF8888");
             return;
         }
         currentTab = tab;
