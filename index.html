@@ -407,7 +407,7 @@
             <img src="IMG_0944-photos.png" alt="монета" id="mainCoinImg">
         </div>
         <div class="stat-item">
-            <div class="value">x1.95</div>
+            <div class="value" id="kefValue">x1.95</div>
             <div class="label">КЭФ</div>
         </div>
     </div>
@@ -550,6 +550,7 @@
     const choiceArea = document.querySelector('.choice-area');
     const betPanel = document.querySelector('.bet-panel');
     const multiplierStrip = document.getElementById('multiplierStrip');
+    const kefValue = document.getElementById('kefValue');
     
     let isMessageShowing = false;
     function showFloatingMessage(text, color) {
@@ -606,6 +607,13 @@
                 multiplierCircles[i].innerText = `?`;
             }
         }
+        // обновляем отображаемый кэф справа от монетки
+        if (kefValue) {
+            let displayMult = currentRiskMultiplier;
+            if (!riskActive && currentRiskStep === 1) displayMult = 1.95;
+            if (riskActive && currentRiskStep >= 2) displayMult = currentRiskMultiplier;
+            kefValue.innerText = `x${displayMult.toFixed(2)}`;
+        }
         const wrapper = document.querySelector('.multiplier-strip-wrapper');
         const targetCircle = multiplierCircles[currentRiskStep - 1];
         if (targetCircle && wrapper) {
@@ -628,6 +636,7 @@
                 multiplierCircles[i].innerText = `?`;
             }
         }
+        if (kefValue) kefValue.innerText = `x1.95`;
     }
     
     function updateBalanceUI() {
@@ -650,6 +659,10 @@
             item.innerText = 'ЗАБРАНО';
             item.style.backgroundColor = '#CC8800';
             item.style.color = '#ffffff';
+        } else if (type === 'insufficient') {
+            item.innerText = 'ПОПОЛНИТЕ БАЛАНС';
+            item.style.backgroundColor = '#4A5568';
+            item.style.color = '#cbd5e0';
         }
         historyList.prepend(item);
         while (historyList.children.length > 12) historyList.removeChild(historyList.lastChild);
@@ -682,7 +695,7 @@
             setTimeout(() => {
                 mainCoinImg.classList.remove('coin-animation');
                 resolve();
-            }, 300);
+            }, 250);
         });
     }
     
@@ -714,7 +727,6 @@
         const result = Math.random() < 0.5 ? "ОРЕЛ" : "РЕШКА";
         const isWin = result === userChoice;
         await animateCoin(result);
-        await new Promise(resolve => setTimeout(resolve, 800));
         if (isWin) {
             currentRiskStep++;
             if (currentRiskStep <= 12) {
@@ -724,7 +736,6 @@
                 addHistory('win');
                 winStreak++;
                 if (currentRiskStep >= 12) addHistory('win');
-                showFloatingMessage(`ПОБЕДА! +${currentRiskStake} ⭐`, "#88FF88");
             }
         } else {
             addHistory('loss');
@@ -732,21 +743,19 @@
             resetRiskMode();
             currentRound++;
             roundEl.innerText = currentRound;
-            showFloatingMessage(`ПРОИГРЫШ! -${currentRiskStake} ⭐`, "#FF8888");
         }
         saveGame();
     }
     
     async function firstFlip() {
         if (bet > balance) {
-            addHistory('loss');
-            showFloatingMessage("Не хватает Stars!", "#FF8888");
+            addHistory('insufficient');
+            showFloatingMessage("Пополните баланс!", "#9CA3AF");
             return;
         }
         const result = Math.random() < 0.5 ? "ОРЕЛ" : "РЕШКА";
         const isWin = result === userChoice;
         await animateCoin(result);
-        await new Promise(resolve => setTimeout(resolve, 800));
         if (isWin) {
             currentRiskStep = 2;
             currentRiskMultiplier = multipliersList[1];
@@ -757,7 +766,6 @@
             updateMultiplierCircles();
             addHistory('win');
             winStreak++;
-            showFloatingMessage(`ПОБЕДА! +${currentRiskStake} ⭐`, "#88FF88");
         } else {
             balance -= bet;
             updateBalanceUI();
@@ -765,7 +773,6 @@
             winStreak = 0;
             currentRound++;
             roundEl.innerText = currentRound;
-            showFloatingMessage(`ПРОИГРЫШ! -${bet} ⭐`, "#FF8888");
             if (balance <= 0) addHistory('loss');
         }
         updateBetUI();
@@ -775,8 +782,8 @@
     function makeBet() {
         if (riskActive) return;
         if (bet < 1 || bet > balance) {
-            addHistory('loss');
-            showFloatingMessage("Некорректная ставка", "#FF8888");
+            addHistory('insufficient');
+            showFloatingMessage("Пополните баланс!", "#9CA3AF");
             return;
         }
         firstFlip();
