@@ -339,9 +339,7 @@
     </div>
 
     <div class="multiplier-strip-wrapper">
-        <div class="multiplier-strip" id="multiplierStrip">
-            <!-- 12 кружков будут созданы через JS -->
-        </div>
+        <div class="multiplier-strip" id="multiplierStrip"></div>
     </div>
 
     <div class="center-stats">
@@ -418,8 +416,8 @@
     const BASE_MULTIPLIER = 1.95;
 
     let riskActive = false;
-    let currentRiskStep = 0;
-    let currentRiskMultiplier = 1.0;
+    let currentRiskStep = 1;  // на каком шаге сейчас (1 = первый кружок)
+    let currentRiskMultiplier = 1.95;
     let currentRiskStake = 0;
     
     // 12 множителей
@@ -448,17 +446,22 @@
     const betPanel = document.querySelector('.bet-panel');
     const multiplierStrip = document.getElementById('multiplierStrip');
 
-    // Создание 12 кружков
+    // Создание 12 кружков (видно только первый и второй)
     function createMultiplierCircles() {
         multiplierStrip.innerHTML = '';
         for (let i = 0; i < 12; i++) {
             const circle = document.createElement('div');
             circle.className = 'multiplier-circle';
             if (i === 0) {
-                // первый кружок всегда показывает x1.95 (начальный кэф)
-                circle.innerHTML = `<div class="mult-value">x${multipliersList[0]}</div><div class="mult-desc">сейчас</div>`;
+                circle.innerHTML = `<div class="mult-value">x${multipliersList[0]}</div><div class="mult-desc">текущий</div>`;
                 circle.classList.add('active');
+                circle.style.display = 'flex';
+            } else if (i === 1) {
+                circle.innerHTML = `<div class="mult-value">x${multipliersList[1]}</div><div class="mult-desc">следующий</div>`;
+                circle.style.display = 'flex';
+                circle.classList.add('next');
             } else {
+                circle.style.display = 'none';
                 circle.innerHTML = `<div class="mult-value">x${multipliersList[i]}</div><div class="mult-desc">шаг ${i+1}</div>`;
             }
             multiplierStrip.appendChild(circle);
@@ -468,38 +471,49 @@
     const multiplierCircles = document.querySelectorAll('.multiplier-circle');
 
     function updateMultiplierCircles() {
+        // показать текущий и следующий кружки
         for (let i = 0; i < multiplierCircles.length; i++) {
-            if (i <= currentRiskStep) {
+            if (i === currentRiskStep - 1) {
+                // текущий кружок
+                multiplierCircles[i].style.display = 'flex';
                 multiplierCircles[i].classList.add('active');
-                if (i === currentRiskStep && currentRiskStep > 0 && currentRiskStep < 11) {
-                    // подсветка следующего доступного множителя
-                    multiplierCircles[i+1]?.classList.add('next');
-                }
-            } else {
-                multiplierCircles[i].classList.remove('active');
                 multiplierCircles[i].classList.remove('next');
+                multiplierCircles[i].innerHTML = `<div class="mult-value">x${multipliersList[i]}</div><div class="mult-desc">текущий</div>`;
+            } else if (i === currentRiskStep) {
+                // следующий кружок
+                multiplierCircles[i].style.display = 'flex';
+                multiplierCircles[i].classList.add('next');
+                multiplierCircles[i].classList.remove('active');
+                multiplierCircles[i].innerHTML = `<div class="mult-value">x${multipliersList[i]}</div><div class="mult-desc">следующий</div>`;
+            } else {
+                multiplierCircles[i].style.display = 'none';
+                multiplierCircles[i].classList.remove('active', 'next');
             }
         }
-        // автоскролл к текущему шагу
-        if (currentRiskStep >= 0 && currentRiskStep < multiplierCircles.length) {
-            const wrapper = document.querySelector('.multiplier-strip-wrapper');
-            const targetCircle = multiplierCircles[currentRiskStep];
-            if (targetCircle && wrapper) {
-                const scrollLeft = targetCircle.offsetLeft - wrapper.offsetWidth / 2 + targetCircle.offsetWidth / 2;
-                wrapper.scrollTo({ left: Math.max(0, scrollLeft), behavior: 'smooth' });
-            }
+        // автоскролл к текущему
+        const wrapper = document.querySelector('.multiplier-strip-wrapper');
+        const targetCircle = multiplierCircles[currentRiskStep - 1];
+        if (targetCircle && wrapper) {
+            const scrollLeft = targetCircle.offsetLeft - wrapper.offsetWidth / 2 + targetCircle.offsetWidth / 2;
+            wrapper.scrollTo({ left: Math.max(0, scrollLeft), behavior: 'smooth' });
         }
     }
 
     function resetMultiplierCircles() {
-        currentRiskStep = 0;
+        currentRiskStep = 1;
         for (let i = 0; i < multiplierCircles.length; i++) {
             if (i === 0) {
+                multiplierCircles[i].style.display = 'flex';
                 multiplierCircles[i].classList.add('active');
+                multiplierCircles[i].innerHTML = `<div class="mult-value">x${multipliersList[0]}</div><div class="mult-desc">текущий</div>`;
+            } else if (i === 1) {
+                multiplierCircles[i].style.display = 'flex';
+                multiplierCircles[i].classList.add('next');
+                multiplierCircles[i].innerHTML = `<div class="mult-value">x${multipliersList[1]}</div><div class="mult-desc">следующий</div>`;
             } else {
-                multiplierCircles[i].classList.remove('active');
+                multiplierCircles[i].style.display = 'none';
+                multiplierCircles[i].classList.remove('active', 'next');
             }
-            multiplierCircles[i].classList.remove('next');
         }
     }
 
@@ -555,9 +569,9 @@
         riskActive = false;
         actionButtons.style.display = 'none';
         playBtn.style.display = 'block';
-        currentRiskMultiplier = 1.0;
+        currentRiskMultiplier = 1.95;
         currentRiskStake = 0;
-        currentRiskStep = 0;
+        currentRiskStep = 1;
         resetMultiplierCircles();
         saveGame();
     }
@@ -582,13 +596,13 @@
         animateCoin(result);
         if (isWin) {
             currentRiskStep++;
-            if (currentRiskStep <= 11) {
-                currentRiskMultiplier = multipliersList[currentRiskStep];
+            if (currentRiskStep <= 12) {
+                currentRiskMultiplier = multipliersList[currentRiskStep - 1];
                 currentRiskStake = Math.floor(bet * currentRiskMultiplier);
                 updateMultiplierCircles();
                 addHistory(`🪙 РИСК: ${result} ✅ ВЫИГРЫШ! МНОЖИТЕЛЬ ${currentRiskMultiplier.toFixed(2)}x, СУММА ${currentRiskStake} ⭐`, 'win');
                 winStreak++;
-                if (currentRiskStep >= 11) {
+                if (currentRiskStep >= 12) {
                     addHistory(`🏆 МАКСИМАЛЬНЫЙ МНОЖИТЕЛЬ! ЗАБИРАЙ ВЫИГРЫШ`, 'win');
                 }
             }
@@ -611,7 +625,7 @@
         const isWin = (result === userChoice);
         animateCoin(result);
         if (isWin) {
-            currentRiskStep = 1;
+            currentRiskStep = 2;
             currentRiskMultiplier = multipliersList[1];
             currentRiskStake = Math.floor(bet * currentRiskMultiplier);
             riskActive = true;
@@ -762,14 +776,14 @@
                 bet = data.bet ?? 100;
                 userChoice = data.userChoice ?? "ОРЕЛ";
                 riskActive = data.riskActive ?? false;
-                currentRiskStep = data.currentRiskStep ?? 0;
-                currentRiskMultiplier = data.currentRiskMultiplier ?? 1.0;
+                currentRiskStep = data.currentRiskStep ?? 1;
+                currentRiskMultiplier = data.currentRiskMultiplier ?? 1.95;
                 currentRiskStake = data.currentRiskStake ?? 0;
                 updateBalanceUI();
                 updateBetUI();
                 roundEl.innerText = currentRound;
                 setChoice(userChoice);
-                if (riskActive && currentRiskStep > 0) {
+                if (riskActive && currentRiskStep > 1) {
                     actionButtons.style.display = 'flex';
                     playBtn.style.display = 'none';
                     updateMultiplierCircles();
@@ -812,7 +826,7 @@
     riskBtn.addEventListener('click', riskFlip);
 
     document.getElementById('howBtn').addEventListener('click', () => {
-        alert(`⭐ STARSFLIP — игра на монетке\n\nПРАВИЛА:\n1. Сделай ставку и выбери ОРЁЛ или РЕШКА\n2. Если угадал → можешь ЗАБРАТЬ или КРУТИТЬ ДАЛЬШЕ\n3. При каждом успешном КРУТИТЬ открывается новая монетка и растёт множитель\n4. Всего 12 шагов, максимальный множитель x${multipliersList[11]}\n5. При проигрыше теряешь всё\n\nИграй честно, удачи!`);
+        alert(`⭐ STARSFLIP — игра на монетке\n\nПРАВИЛА:\n1. Сделай ставку и выбери ОРЁЛ или РЕШКА\n2. Если угадал → можешь ЗАБРАТЬ или КРУТИТЬ ДАЛЬШЕ\n3. Видишь только текущий и следующий множители\n4. Всего 12 шагов, максимальный множитель x${multipliersList[11]}\n5. При проигрыше теряешь всё\n\nИграй честно, удачи!`);
     });
 
     loadGame();
