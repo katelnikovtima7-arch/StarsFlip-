@@ -71,13 +71,7 @@
             overflow-y: hidden;
             padding: 16px 16px 8px 16px;
             flex-shrink: 0;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            mask-image: linear-gradient(to right, black 0%, black 85%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to right, black 0%, black 85%, transparent 100%);
-        }
-        .multiplier-strip-wrapper::-webkit-scrollbar {
-            display: none;
+            scrollbar-width: thin;
         }
         .multiplier-strip {
             display: flex;
@@ -91,19 +85,34 @@
             background: #1A2438;
             border: 1px solid #2A3A50;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: bold;
             color: #5A6E8A;
             transition: all 0.2s;
             flex-shrink: 0;
+            text-align: center;
+            line-height: 1.2;
+        }
+        .multiplier-circle .mult-value {
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .multiplier-circle .mult-desc {
+            font-size: 0.55rem;
+            opacity: 0.8;
         }
         .multiplier-circle.active {
             background: #2F9EFF;
             border-color: #2F9EFF;
             color: white;
             box-shadow: 0 0 8px #2f9eff;
+        }
+        .multiplier-circle.next {
+            border: 2px solid #ffaa33;
+            box-shadow: 0 0 5px #ffaa33;
         }
         .center-stats {
             display: flex;
@@ -300,6 +309,7 @@
             border-top: 1px solid #1A2438;
             padding: 10px 16px 20px;
             flex-shrink: 0;
+            margin-top: auto;
         }
         .nav-item {
             display: flex;
@@ -329,7 +339,9 @@
     </div>
 
     <div class="multiplier-strip-wrapper">
-        <div class="multiplier-strip" id="multiplierStrip"></div>
+        <div class="multiplier-strip" id="multiplierStrip">
+            <!-- 12 кружков будут созданы через JS -->
+        </div>
     </div>
 
     <div class="center-stats">
@@ -442,7 +454,13 @@
         for (let i = 0; i < 12; i++) {
             const circle = document.createElement('div');
             circle.className = 'multiplier-circle';
-            circle.innerText = '?';
+            if (i === 0) {
+                // первый кружок всегда показывает x1.95 (начальный кэф)
+                circle.innerHTML = `<div class="mult-value">x${multipliersList[0]}</div><div class="mult-desc">сейчас</div>`;
+                circle.classList.add('active');
+            } else {
+                circle.innerHTML = `<div class="mult-value">x${multipliersList[i]}</div><div class="mult-desc">шаг ${i+1}</div>`;
+            }
             multiplierStrip.appendChild(circle);
         }
     }
@@ -451,20 +469,24 @@
 
     function updateMultiplierCircles() {
         for (let i = 0; i < multiplierCircles.length; i++) {
-            if (i < currentRiskStep) {
+            if (i <= currentRiskStep) {
                 multiplierCircles[i].classList.add('active');
-                multiplierCircles[i].innerText = 'x' + multipliersList[i];
+                if (i === currentRiskStep && currentRiskStep > 0 && currentRiskStep < 11) {
+                    // подсветка следующего доступного множителя
+                    multiplierCircles[i+1]?.classList.add('next');
+                }
             } else {
                 multiplierCircles[i].classList.remove('active');
-                multiplierCircles[i].innerText = '?';
+                multiplierCircles[i].classList.remove('next');
             }
         }
-        if (currentRiskStep > 0 && currentRiskStep <= multiplierCircles.length) {
+        // автоскролл к текущему шагу
+        if (currentRiskStep >= 0 && currentRiskStep < multiplierCircles.length) {
             const wrapper = document.querySelector('.multiplier-strip-wrapper');
-            const lastCircle = multiplierCircles[currentRiskStep - 1];
-            if (lastCircle && wrapper) {
-                const scrollLeft = lastCircle.offsetLeft - wrapper.offsetWidth / 2 + lastCircle.offsetWidth / 2;
-                wrapper.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+            const targetCircle = multiplierCircles[currentRiskStep];
+            if (targetCircle && wrapper) {
+                const scrollLeft = targetCircle.offsetLeft - wrapper.offsetWidth / 2 + targetCircle.offsetWidth / 2;
+                wrapper.scrollTo({ left: Math.max(0, scrollLeft), behavior: 'smooth' });
             }
         }
     }
@@ -472,8 +494,12 @@
     function resetMultiplierCircles() {
         currentRiskStep = 0;
         for (let i = 0; i < multiplierCircles.length; i++) {
-            multiplierCircles[i].classList.remove('active');
-            multiplierCircles[i].innerText = '?';
+            if (i === 0) {
+                multiplierCircles[i].classList.add('active');
+            } else {
+                multiplierCircles[i].classList.remove('active');
+            }
+            multiplierCircles[i].classList.remove('next');
         }
     }
 
@@ -556,13 +582,13 @@
         animateCoin(result);
         if (isWin) {
             currentRiskStep++;
-            if (currentRiskStep <= 12) {
-                currentRiskMultiplier = multipliersList[currentRiskStep - 1];
+            if (currentRiskStep <= 11) {
+                currentRiskMultiplier = multipliersList[currentRiskStep];
                 currentRiskStake = Math.floor(bet * currentRiskMultiplier);
                 updateMultiplierCircles();
                 addHistory(`🪙 РИСК: ${result} ✅ ВЫИГРЫШ! МНОЖИТЕЛЬ ${currentRiskMultiplier.toFixed(2)}x, СУММА ${currentRiskStake} ⭐`, 'win');
                 winStreak++;
-                if (currentRiskStep >= 12) {
+                if (currentRiskStep >= 11) {
                     addHistory(`🏆 МАКСИМАЛЬНЫЙ МНОЖИТЕЛЬ! ЗАБИРАЙ ВЫИГРЫШ`, 'win');
                 }
             }
@@ -586,7 +612,7 @@
         animateCoin(result);
         if (isWin) {
             currentRiskStep = 1;
-            currentRiskMultiplier = multipliersList[0];
+            currentRiskMultiplier = multipliersList[1];
             currentRiskStake = Math.floor(bet * currentRiskMultiplier);
             riskActive = true;
             actionButtons.style.display = 'flex';
@@ -746,18 +772,7 @@
                 if (riskActive && currentRiskStep > 0) {
                     actionButtons.style.display = 'flex';
                     playBtn.style.display = 'none';
-                    for (let i = 0; i < currentRiskStep && i < multiplierCircles.length; i++) {
-                        multiplierCircles[i].classList.add('active');
-                        multiplierCircles[i].innerText = 'x' + multipliersList[i];
-                    }
-                    setTimeout(() => {
-                        const wrapper = document.querySelector('.multiplier-strip-wrapper');
-                        const lastCircle = multiplierCircles[currentRiskStep - 1];
-                        if (lastCircle && wrapper) {
-                            const scrollLeft = lastCircle.offsetLeft - wrapper.offsetWidth / 2 + lastCircle.offsetWidth / 2;
-                            wrapper.scrollTo({ left: scrollLeft, behavior: 'smooth' });
-                        }
-                    }, 100);
+                    updateMultiplierCircles();
                 } else {
                     actionButtons.style.display = 'none';
                     playBtn.style.display = 'block';
