@@ -59,14 +59,14 @@
         .balance-top {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             background: #1A2438;
-            padding: 6px 14px;
+            padding: 6px 12px;
             border-radius: 40px;
         }
         .balance-top img {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
         }
         .balance-top .amount {
             font-size: 1.2rem;
@@ -585,10 +585,6 @@
             item.innerText = 'ПОПОЛНИТЕ БАЛАНС';
             item.style.backgroundColor = '#4A5568';
             item.style.color = '#cbd5e0';
-        } else if (type === 'ref_earn') {
-            item.innerText = 'РЕФЕРАЛ +10%';
-            item.style.backgroundColor = '#2F4A6E';
-            item.style.color = '#ccddff';
         }
         historyList.prepend(item);
         while (historyList.children.length > 12) historyList.removeChild(historyList.lastChild);
@@ -728,7 +724,6 @@
         dynamicContent.style.flexDirection = 'column';
         dynamicContent.style.padding = '16px';
         dynamicContent.style.gap = '16px';
-        dynamicContent.style.height = '100%';
         dynamicContent.style.overflowY = 'auto';
         
         let level = Math.floor(winStreak / 10) + 1;
