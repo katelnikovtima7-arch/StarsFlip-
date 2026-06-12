@@ -389,7 +389,7 @@
         <div class="logo">StarsFlip</div>
         <div class="how-btn" id="howBtn">Как играть</div>
         <div class="balance-top">
-            <div class="amount" id="balanceValue">50000</div>
+            <div class="amount" id="balanceValue">90000</div>
             <div class="label">⭐ STARS</div>
         </div>
     </div>
@@ -449,7 +449,11 @@
     <div class="bottom-nav">
         <div class="nav-item active" data-tab="coin">
             <div class="nav-icon">🪙</div>
-            <div class="nav-label">COINFLIP</div>
+            <div class="nav-label">StarsFlip</div>
+        </div>
+        <div class="nav-item" data-tab="bonus">
+            <div class="nav-icon">🎁</div>
+            <div class="nav-label">Бонусы</div>
         </div>
         <div class="nav-item" data-tab="leaders">
             <div class="nav-icon">🏆</div>
@@ -457,7 +461,7 @@
         </div>
         <div class="nav-item" data-tab="my">
             <div class="nav-icon">👤</div>
-            <div class="nav-label">Мой</div>
+            <div class="nav-label">Профиль</div>
         </div>
     </div>
 </div>
@@ -482,7 +486,7 @@
     } catch(e) { console.log("браузер"); }
     
     // ------------------- ОСНОВНЫЕ ПАРАМЕТРЫ -------------------
-    let balance = 50000;
+    let balance = 90000;
     let currentRound = 1;
     let winStreak = 0;
     let bet = 100;
@@ -513,7 +517,6 @@
         let link = createReferralLink();
         if (navigator.clipboard) {
             navigator.clipboard.writeText(link);
-            showFloatingMessage("Ссылка скопирована!", "#88FF88");
         } else {
             prompt("Скопируйте ссылку:", link);
         }
@@ -607,7 +610,6 @@
                 multiplierCircles[i].innerText = `?`;
             }
         }
-        // обновляем отображаемый кэф справа от монетки
         if (kefValue) {
             let displayMult = currentRiskMultiplier;
             if (!riskActive && currentRiskStep === 1) displayMult = 1.95;
@@ -750,7 +752,6 @@
     async function firstFlip() {
         if (bet > balance) {
             addHistory('insufficient');
-            showFloatingMessage("Пополните баланс!", "#9CA3AF");
             return;
         }
         const result = Math.random() < 0.5 ? "ОРЕЛ" : "РЕШКА";
@@ -783,13 +784,47 @@
         if (riskActive) return;
         if (bet < 1 || bet > balance) {
             addHistory('insufficient');
-            showFloatingMessage("Пополните баланс!", "#9CA3AF");
             return;
         }
         firstFlip();
     }
     
-    // ========== ПРОФИЛЬ ==========
+    // ========== ВКЛАДКИ ==========
+    function renderBonusTab() {
+        centerStats.style.display = 'none';
+        mainCoinDiv.style.display = 'none';
+        choiceArea.style.display = 'none';
+        betPanel.style.display = 'none';
+        playBtn.style.display = 'none';
+        actionButtons.style.display = 'none';
+        historySection.style.display = 'none';
+        document.querySelector('.multiplier-strip-wrapper').style.display = 'none';
+        dynamicContent.style.display = 'flex';
+        dynamicContent.style.flexDirection = 'column';
+        dynamicContent.style.padding = '16px';
+        dynamicContent.innerHTML = `
+            <div style="background:#1A2438; border-radius:28px; padding:30px 20px; text-align:center;">
+                <div style="font-size:3rem;">🎁</div>
+                <div style="font-size:1.2rem; color:white; margin-top:12px;">Ежедневный бонус</div>
+                <div style="font-size:0.8rem; color:#5A6E8A; margin-top:8px;">Заходи каждый день и получай бонус!</div>
+                <button id="dailyBonusBtn" style="background:#2F9EFF; border:none; border-radius:60px; padding:14px 30px; margin-top:20px; font-weight:bold; color:white; cursor:pointer;">ЗАБРАТЬ БОНУС</button>
+                <div style="margin-top:20px; font-size:0.7rem; color:#5A6E8A;">Бонус: 1000 ⭐</div>
+            </div>
+        `;
+        document.getElementById('dailyBonusBtn')?.addEventListener('click', () => {
+            let lastBonus = localStorage.getItem('lastDailyBonus');
+            let today = new Date().toDateString();
+            if (lastBonus === today) {
+                showFloatingMessage("Бонус уже получен сегодня!", "#FF8888");
+            } else {
+                balance += 1000;
+                updateBalanceUI();
+                localStorage.setItem('lastDailyBonus', today);
+                showFloatingMessage("Получено 1000 ⭐!", "#88FF88");
+            }
+        });
+    }
+    
     function renderProfileTab() {
         centerStats.style.display = 'none';
         mainCoinDiv.style.display = 'none';
@@ -799,46 +834,26 @@
         actionButtons.style.display = 'none';
         historySection.style.display = 'none';
         document.querySelector('.multiplier-strip-wrapper').style.display = 'none';
-        
         dynamicContent.style.display = 'flex';
         dynamicContent.style.flexDirection = 'column';
         dynamicContent.style.padding = '16px';
-        
         dynamicContent.innerHTML = `
             <div class="profile-stats-row">
-                <div class="profile-stat">
-                    <div class="num">${Math.floor(balance)}</div>
-                    <div class="label">БАЛАНС</div>
-                </div>
-                <div class="profile-stat">
-                    <div class="num">${winStreak}</div>
-                    <div class="label">ВИНСТРИК</div>
-                </div>
-                <div class="profile-stat">
-                    <div class="num">${currentRound}</div>
-                    <div class="label">РАУНДОВ</div>
-                </div>
+                <div class="profile-stat"><div class="num">${Math.floor(balance)}</div><div class="label">БАЛАНС</div></div>
+                <div class="profile-stat"><div class="num">${winStreak}</div><div class="label">ВИНСТРИК</div></div>
+                <div class="profile-stat"><div class="num">${currentRound}</div><div class="label">РАУНДОВ</div></div>
             </div>
             <div class="referral-block">
-                <div class="referral-header">
-                    <h4>🤝 РЕФЕРАЛЫ</h4>
-                </div>
+                <div class="referral-header"><h4>🤝 РЕФЕРАЛЫ</h4></div>
                 <div class="referral-two-cols">
-                    <div class="ref-item">
-                        <div class="value">${referralCount}</div>
-                        <div class="label">ПРИГЛАШЕНО</div>
-                    </div>
-                    <div class="ref-item">
-                        <div class="value">${referralEarnings}</div>
-                        <div class="label">ЗАРАБОТАНО ⭐</div>
-                    </div>
+                    <div class="ref-item"><div class="value">${referralCount}</div><div class="label">ПРИГЛАШЕНО</div></div>
+                    <div class="ref-item"><div class="value">${referralEarnings}</div><div class="label">ЗАРАБОТАНО ⭐</div></div>
                 </div>
                 <button class="ref-btn-big" id="inviteBtn">🏆 ПРИГЛАСИТЬ ДРУЗЕЙ</button>
                 <button class="copy-btn-big" id="copyLinkBtn">📋 КОПИРОВАТЬ ССЫЛКУ</button>
                 <div class="ref-hint">Приглашай друзей и получай 10% от их выигрышей!</div>
             </div>
         `;
-        
         document.getElementById('inviteBtn')?.addEventListener('click', () => copyReferralLink());
         document.getElementById('copyLinkBtn')?.addEventListener('click', () => copyReferralLink());
     }
@@ -853,7 +868,6 @@
         historySection.style.display = 'none';
         document.querySelector('.multiplier-strip-wrapper').style.display = 'none';
         dynamicContent.style.display = 'flex';
-        
         dynamicContent.innerHTML = `
             <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; gap:20px;">
                 <div style="font-size:3rem;">🏆</div>
@@ -900,6 +914,7 @@
             item.classList.toggle('active', item.dataset.tab === tab);
         });
         if (tab === 'coin') renderCoinTab();
+        else if (tab === 'bonus') renderBonusTab();
         else if (tab === 'leaders') renderLeadersTab();
         else if (tab === 'my') renderProfileTab();
     }
@@ -921,7 +936,7 @@
         if (saved) {
             try {
                 const data = JSON.parse(saved);
-                balance = data.balance ?? 50000;
+                balance = data.balance ?? 90000;
                 currentRound = data.currentRound ?? 1;
                 winStreak = data.winStreak ?? 0;
                 bet = data.bet ?? 100;
