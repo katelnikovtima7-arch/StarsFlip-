@@ -12,6 +12,12 @@
             box-sizing: border-box;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         body {
             background: #0A0F1A;
@@ -20,6 +26,7 @@
             overflow: hidden;
             position: fixed;
             width: 100%;
+            touch-action: pan-x pan-y;
         }
         .app {
             width: 100%;
@@ -128,6 +135,7 @@
             height: 120px;
             transition: transform 0.2s ease;
             filter: drop-shadow(0 0 10px #2f9eff60);
+            pointer-events: none;
         }
         .coin-animation {
             animation: coinFlipAnim 0.3s ease-in-out;
@@ -157,7 +165,7 @@
             color: #A0B4D0;
             cursor: pointer;
         }
-        .coin-choice img { width: 24px; height: 24px; }
+        .coin-choice img { width: 24px; height: 24px; pointer-events: none; }
         .coin-choice.selected {
             background: #2F9EFF;
             border-color: #2F9EFF;
