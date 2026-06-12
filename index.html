@@ -57,16 +57,21 @@
             cursor: pointer;
         }
         .balance-top {
-            text-align: right;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #1A2438;
+            padding: 6px 14px;
+            border-radius: 40px;
+        }
+        .balance-top img {
+            width: 20px;
+            height: 20px;
         }
         .balance-top .amount {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             font-weight: 700;
-            color: white;
-        }
-        .balance-top .label {
-            font-size: 0.6rem;
-            color: #5A6E8A;
+            color: #FFD966;
         }
         .multiplier-strip-wrapper {
             overflow-x: auto;
@@ -292,8 +297,8 @@
         <div class="logo">StarsFlip</div>
         <div class="how-btn" id="howBtn">Как играть</div>
         <div class="balance-top">
-            <div class="amount" id="balanceValue">90000</div>
-            <div class="label">⭐ STARS</div>
+            <img src="IMG_0958-photos.png" alt="⭐">
+            <span class="amount" id="balanceValue">90000</span>
         </div>
     </div>
 
@@ -425,7 +430,6 @@
         }
     }
     
-    // Проверка реферального перехода при запуске
     function checkReferral() {
         if (tg && tg.initDataUnsafe?.start_param) {
             let refCode = tg.initDataUnsafe.start_param;
@@ -709,7 +713,7 @@
         firstFlip();
     }
     
-    // ========== ПРОФИЛЬ С АВАТАРКОЙ ==========
+    // ========== ПРОФИЛЬ ==========
     function renderProfileTab() {
         centerStats.style.display = 'none';
         mainCoinDiv.style.display = 'none';
@@ -724,6 +728,8 @@
         dynamicContent.style.flexDirection = 'column';
         dynamicContent.style.padding = '16px';
         dynamicContent.style.gap = '16px';
+        dynamicContent.style.height = '100%';
+        dynamicContent.style.overflowY = 'auto';
         
         let level = Math.floor(winStreak / 10) + 1;
         
