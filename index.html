@@ -14,7 +14,7 @@
             -webkit-tap-highlight-color: transparent;
         }
         body {
-            background: #0B1120;
+            background: #0A0F1A;
             font-family: 'Inter', -apple-system, 'Segoe UI', sans-serif;
             height: 100vh;
             overflow: hidden;
@@ -25,7 +25,7 @@
             width: 100%;
             max-width: 500px;
             height: 100vh;
-            background: #0B1120;
+            background: #0A0F1A;
             display: flex;
             flex-direction: column;
             margin: 0 auto;
@@ -42,7 +42,7 @@
         .logo {
             font-size: 1.2rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #fff, #8B9DC3);
+            background: linear-gradient(135deg, #fff, #4A8BDF);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -67,6 +67,7 @@
             font-size: 0.6rem;
             color: #5A6E8A;
         }
+        /* кружки */
         .multiplier-strip-wrapper {
             overflow-x: auto;
             overflow-y: hidden;
@@ -77,9 +78,7 @@
             mask-image: linear-gradient(to right, black 0%, black 85%, transparent 100%);
             -webkit-mask-image: linear-gradient(to right, black 0%, black 85%, transparent 100%);
         }
-        .multiplier-strip-wrapper::-webkit-scrollbar {
-            display: none;
-        }
+        .multiplier-strip-wrapper::-webkit-scrollbar { display: none; }
         .multiplier-strip {
             display: flex;
             gap: 12px;
@@ -97,7 +96,6 @@
             font-size: 0.8rem;
             font-weight: bold;
             color: #5A6E8A;
-            transition: all 0.2s;
             flex-shrink: 0;
         }
         .multiplier-circle.active {
@@ -126,9 +124,7 @@
             font-size: 0.6rem;
             color: #5A6E8A;
         }
-        .main-coin {
-            text-align: center;
-        }
+        .main-coin { text-align: center; }
         .main-coin img {
             width: 120px;
             height: 120px;
@@ -162,12 +158,8 @@
             font-size: 0.95rem;
             color: #A0B4D0;
             cursor: pointer;
-            transition: 0.1s;
         }
-        .coin-choice img {
-            width: 24px;
-            height: 24px;
-        }
+        .coin-choice img { width: 24px; height: 24px; }
         .coin-choice.selected {
             background: #2F9EFF;
             border-color: #2F9EFF;
@@ -183,15 +175,8 @@
             justify-content: space-between;
             flex-shrink: 0;
         }
-        .bet-label {
-            color: #7F8FA4;
-            font-size: 0.75rem;
-        }
-        .bet-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .bet-label { color: #7F8FA4; font-size: 0.75rem; }
+        .bet-controls { display: flex; align-items: center; gap: 10px; }
         .bet-input {
             background: #1A2438;
             border: none;
@@ -203,10 +188,7 @@
             padding: 8px 0;
             border-radius: 40px;
         }
-        .bet-input:focus {
-            outline: none;
-            box-shadow: 0 0 0 1px #2F9EFF;
-        }
+        .bet-input:focus { outline: none; box-shadow: 0 0 0 1px #2F9EFF; }
         .bet-btn {
             background: #2A3A50;
             border: none;
@@ -224,28 +206,17 @@
             margin: 8px 16px;
             flex-shrink: 0;
         }
-        .take-btn {
+        .take-btn, .risk-btn {
             flex: 1;
-            background: #2F9EFF;
             border: none;
             border-radius: 60px;
             padding: 12px;
             font-weight: bold;
             font-size: 0.9rem;
-            color: white;
             cursor: pointer;
         }
-        .risk-btn {
-            flex: 1;
-            background: #2A3A50;
-            border: none;
-            border-radius: 60px;
-            padding: 12px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            color: white;
-            cursor: pointer;
-        }
+        .take-btn { background: #2F9EFF; color: white; }
+        .risk-btn { background: #2A3A50; color: white; }
         .play-btn {
             background: #2F9EFF;
             border: none;
@@ -297,7 +268,7 @@
         .bottom-nav {
             display: flex;
             justify-content: space-around;
-            background: #0B1120;
+            background: #0A0F1A;
             border-top: 1px solid #1A2438;
             padding: 10px 16px 20px;
             flex-shrink: 0;
@@ -311,31 +282,32 @@
             opacity: 0.5;
             cursor: pointer;
         }
-        .nav-item.active {
-            opacity: 1;
-        }
+        .nav-item.active { opacity: 1; }
         .nav-icon { font-size: 1.2rem; }
         .nav-label { font-size: 0.6rem; color: #A0B4D0; }
         .hidden { display: none; }
         
-        /* Стили для профиля */
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 24px;
+        /* ========== СТИЛЬНЫЙ ПРОФИЛЬ ========== */
+        .profile-card {
+            background: linear-gradient(135deg, #0F1626, #0A0F1A);
+            border-radius: 32px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #2A3A50;
         }
         .profile-avatar {
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #2F9EFF, #8B9DC3);
+            background: linear-gradient(135deg, #2F9EFF, #4A8BDF);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: bold;
             color: white;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 15px rgba(47,158,255,0.3);
         }
         .profile-avatar img {
             width: 100%;
@@ -343,79 +315,100 @@
             border-radius: 50%;
             object-fit: cover;
         }
-        .profile-info h3 {
+        .profile-name {
+            font-size: 1.3rem;
+            font-weight: 700;
             color: white;
-            font-size: 1.2rem;
             margin-bottom: 4px;
         }
-        .profile-info p {
-            color: #5A6E8A;
+        .profile-level {
             font-size: 0.7rem;
+            color: #2F9EFF;
+            background: #2F9EFF20;
+            padding: 4px 12px;
+            border-radius: 30px;
+            display: inline-block;
         }
-        .stats-card {
-            background: #1A2438;
-            border-radius: 24px;
-            padding: 16px;
-            margin-bottom: 20px;
+        .stats-grid {
             display: flex;
             justify-content: space-around;
-        }
-        .stat-card {
-            text-align: center;
-        }
-        .stat-card .value {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #FFD966;
-        }
-        .stat-card .label {
-            font-size: 0.65rem;
-            color: #5A6E8A;
-        }
-        .referral-section {
             background: #1A2438;
-            border-radius: 24px;
+            border-radius: 28px;
             padding: 16px;
             margin-bottom: 20px;
         }
-        .referral-title {
+        .stat-cell {
+            text-align: center;
+        }
+        .stat-cell .stat-num {
+            font-size: 1.4rem;
+            font-weight: 700;
             color: #FFD966;
+        }
+        .stat-cell .stat-label {
+            font-size: 0.6rem;
+            color: #5A6E8A;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .referral-block {
+            background: #1A2438;
+            border-radius: 28px;
+            padding: 20px;
+        }
+        .referral-title {
             font-size: 0.8rem;
-            margin-bottom: 12px;
+            font-weight: 600;
+            color: #2F9EFF;
+            margin-bottom: 16px;
+            letter-spacing: 1px;
         }
         .referral-stats {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
-        .referral-btn {
+        .referral-stat {
+            text-align: center;
+            flex: 1;
+        }
+        .referral-stat .value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+        }
+        .referral-stat .label {
+            font-size: 0.6rem;
+            color: #5A6E8A;
+        }
+        .invite-btn {
             background: #2F9EFF;
+            border: none;
+            border-radius: 60px;
+            padding: 14px;
+            width: 100%;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: white;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .copy-link-btn {
+            background: #2A3A50;
             border: none;
             border-radius: 60px;
             padding: 12px;
             width: 100%;
             font-weight: bold;
-            color: white;
-            cursor: pointer;
-            margin-bottom: 10px;
-        }
-        .copy-btn {
-            background: #2A3A50;
-            border: none;
-            border-radius: 60px;
-            padding: 10px;
-            width: 100%;
-            font-weight: bold;
+            font-size: 0.85rem;
             color: white;
             cursor: pointer;
         }
-        .level-badge {
-            background: #2F9EFF20;
-            border: 1px solid #2F9EFF;
-            border-radius: 30px;
-            padding: 4px 12px;
-            font-size: 0.7rem;
-            color: #2F9EFF;
+        .referral-hint {
+            font-size: 0.6rem;
+            color: #5A6E8A;
+            text-align: center;
+            margin-top: 12px;
         }
     </style>
 </head>
@@ -498,13 +491,12 @@
     </div>
 </div>
 <script>
-    // ------------------- ИНИЦИАЛИЗАЦИЯ TELEGRAM WEBAPP -------------------
+    // ------------------- TELEGRAM WEBAPP -------------------
     let tg = null;
     let telegramUser = null;
     let userAvatar = null;
     let userName = "Игрок";
     
-    // Пытаемся получить данные из Telegram
     try {
         if (window.Telegram && window.Telegram.WebApp) {
             tg = window.Telegram.WebApp;
@@ -513,14 +505,10 @@
             telegramUser = tg.initDataUnsafe?.user;
             if (telegramUser) {
                 userName = telegramUser.first_name || telegramUser.username || "Игрок";
-                if (telegramUser.photo_url) {
-                    userAvatar = telegramUser.photo_url;
-                }
+                if (telegramUser.photo_url) userAvatar = telegramUser.photo_url;
             }
         }
-    } catch(e) {
-        console.log("Telegram WebApp не доступен (работаем в браузере)");
-    }
+    } catch(e) { console.log("браузер"); }
     
     // ------------------- ОСНОВНЫЕ ПАРАМЕТРЫ -------------------
     let balance = 50000;
@@ -535,63 +523,22 @@
     let referralCount = 0;
     let referralEarnings = 0;
     let myReferralCode = "";
-    let referralLink = "";
     
-    // Генерация уникального кода пользователя (если нет)
     function generateReferralCode() {
-        if (telegramUser && telegramUser.id) {
-            return "ref_" + telegramUser.id;
-        }
-        let saved = localStorage.getItem('starsflip_referral_code');
+        if (telegramUser && telegramUser.id) return "ref_" + telegramUser.id;
+        let saved = localStorage.getItem('starsflip_ref_code');
         if (saved) return saved;
         let newCode = "ref_" + Math.random().toString(36).substring(2, 10);
-        localStorage.setItem('starsflip_referral_code', newCode);
+        localStorage.setItem('starsflip_ref_code', newCode);
         return newCode;
     }
     
-    // Создание реферальной ссылки
     function createReferralLink() {
         let code = myReferralCode;
-        // Если есть бот, подставь его username
         let botUsername = "StarsFlipBot"; // ЗАМЕНИТЕ НА ВАШЕГО БОТА
         return `https://t.me/${botUsername}?start=${code}`;
     }
     
-    // Загрузка реферальной статистики
-    function loadReferralStats() {
-        let saved = localStorage.getItem('starsflip_referral_stats');
-        if (saved) {
-            try {
-                let data = JSON.parse(saved);
-                referralCount = data.count || 0;
-                referralEarnings = data.earnings || 0;
-            } catch(e) {}
-        }
-    }
-    
-    // Сохранение реферальной статистики
-    function saveReferralStats() {
-        localStorage.setItem('starsflip_referral_stats', JSON.stringify({
-            count: referralCount,
-            earnings: referralEarnings
-        }));
-    }
-    
-    // Проверка реферального перехода (при запуске)
-    function checkReferral() {
-        if (tg && tg.initDataUnsafe?.start_param) {
-            let refCode = tg.initDataUnsafe.start_param;
-            if (refCode && refCode.startsWith('ref_')) {
-                // Здесь можно отправить запрос к боту, что кто-то перешёл
-                console.log("Переход по реферальной ссылке:", refCode);
-                // Пока просто добавим в статистику демо
-                let referrerCode = refCode;
-                localStorage.setItem('starsflip_referred_by', referrerCode);
-            }
-        }
-    }
-    
-    // Копирование ссылки
     function copyReferralLink() {
         let link = createReferralLink();
         if (navigator.clipboard) {
@@ -602,11 +549,7 @@
         }
     }
     
-    // Инициализация реферальной системы
     myReferralCode = generateReferralCode();
-    loadReferralStats();
-    checkReferral();
-    referralLink = createReferralLink();
     
     let riskActive = false;
     let currentRiskStep = 1;
@@ -638,7 +581,6 @@
     const betPanel = document.querySelector('.bet-panel');
     const multiplierStrip = document.getElementById('multiplierStrip');
     
-    // Функция для отображения всплывающих сообщений (для рефералок)
     let isMessageShowing = false;
     function showFloatingMessage(text, color) {
         if (isMessageShowing) return;
@@ -657,10 +599,7 @@
         msg.style.fontWeight = 'bold';
         msg.innerText = text;
         document.body.appendChild(msg);
-        setTimeout(() => {
-            msg.remove();
-            isMessageShowing = false;
-        }, 1500);
+        setTimeout(() => { msg.remove(); isMessageShowing = false; }, 1500);
     }
     
     function createMultiplierCircles() {
@@ -759,14 +698,8 @@
         mainCoinImg.classList.remove('coin-animation');
         void mainCoinImg.offsetHeight;
         mainCoinImg.classList.add('coin-animation');
-        if (result === 'ОРЕЛ') {
-            mainCoinImg.src = 'IMG_0944-photos.png';
-        } else {
-            mainCoinImg.src = 'IMG_0945-photos.png';
-        }
-        setTimeout(() => {
-            mainCoinImg.classList.remove('coin-animation');
-        }, 300);
+        mainCoinImg.src = result === 'ОРЕЛ' ? 'IMG_0944-photos.png' : 'IMG_0945-photos.png';
+        setTimeout(() => mainCoinImg.classList.remove('coin-animation'), 300);
     }
     
     function resetRiskMode() {
@@ -782,11 +715,10 @@
     
     function takeProfit() {
         if (!riskActive) return;
-        const winAmount = currentRiskStake;
-        balance += winAmount;
+        balance += currentRiskStake;
         winStreak = 0;
         updateBalanceUI();
-        addHistory(`✅ ЗАБРАЛ(А) ${winAmount} ⭐ (x${currentRiskMultiplier.toFixed(2)})`, 'take');
+        addHistory(`✅ ЗАБРАЛ(А) ${currentRiskStake} ⭐ (x${currentRiskMultiplier.toFixed(2)})`, 'take');
         resetRiskMode();
         currentRound++;
         roundEl.innerText = currentRound;
@@ -796,7 +728,7 @@
     function riskFlip() {
         if (!riskActive) return;
         const result = Math.random() < 0.5 ? "ОРЕЛ" : "РЕШКА";
-        const isWin = (result === userChoice);
+        const isWin = result === userChoice;
         animateCoin(result);
         if (isWin) {
             currentRiskStep++;
@@ -806,9 +738,7 @@
                 updateMultiplierCircles();
                 addHistory(`🪙 РИСК: ${result} ✅ ВЫИГРЫШ! МНОЖИТЕЛЬ ${currentRiskMultiplier.toFixed(2)}x, СУММА ${currentRiskStake} ⭐`, 'win');
                 winStreak++;
-                if (currentRiskStep >= 12) {
-                    addHistory(`🏆 МАКСИМАЛЬНЫЙ МНОЖИТЕЛЬ! ЗАБИРАЙ ВЫИГРЫШ`, 'win');
-                }
+                if (currentRiskStep >= 12) addHistory(`🏆 МАКСИМАЛЬНЫЙ МНОЖИТЕЛЬ! ЗАБИРАЙ ВЫИГРЫШ`, 'win');
             }
         } else {
             addHistory(`🪙 РИСК: ${result} ❌ ПРОИГРЫШ! ПОТЕРЯНО ${currentRiskStake} ⭐`, 'loss');
@@ -826,7 +756,7 @@
             return;
         }
         const result = Math.random() < 0.5 ? "ОРЕЛ" : "РЕШКА";
-        const isWin = (result === userChoice);
+        const isWin = result === userChoice;
         animateCoin(result);
         if (isWin) {
             currentRiskStep = 2;
@@ -836,7 +766,7 @@
             actionButtons.style.display = 'flex';
             playBtn.style.display = 'none';
             updateMultiplierCircles();
-            addHistory(`🪙 ${result} ✅ ВЫИГРЫШ! МНОЖИТЕЛЬ ${currentRiskMultiplier.toFixed(2)}x, МОЖЕШЬ ЗАБРАТЬ ${currentRiskStake} ⭐`, 'win');
+            addHistory(`🪙 ${result} ✅ ВЫИГРЫШ! МОЖЕШЬ ЗАБРАТЬ ${currentRiskStake} ⭐`, 'win');
             winStreak++;
         } else {
             balance -= bet;
@@ -845,10 +775,7 @@
             winStreak = 0;
             currentRound++;
             roundEl.innerText = currentRound;
-            if (balance <= 0) {
-                addHistory(`💔 Банкротство`, 'loss');
-                playBtn.disabled = true;
-            }
+            if (balance <= 0) addHistory(`💔 Банкротство`, 'loss');
         }
         updateBetUI();
         saveGame();
@@ -863,70 +790,54 @@
         firstFlip();
     }
     
-    // ------------------- ПРОФИЛЬ С РЕФЕРАЛКАМИ -------------------
+    // ========== СТИЛЬНЫЙ ПРОФИЛЬ ==========
     function renderProfileTab() {
         showGameUI(false);
-        let avatarHtml = '';
-        if (userAvatar) {
-            avatarHtml = `<img src="${userAvatar}" alt="avatar">`;
-        } else {
-            let firstLetter = userName.charAt(0).toUpperCase();
-            avatarHtml = `<span style="font-size: 2rem;">${firstLetter}</span>`;
-        }
+        let avatarHtml = userAvatar ? `<img src="${userAvatar}" alt="avatar">` : `<span style="font-size: 2rem;">${userName.charAt(0).toUpperCase()}</span>`;
+        let level = Math.floor(winStreak / 10) + 1;
         
         dynamicContent.innerHTML = `
-            <div class="profile-header">
-                <div class="profile-avatar">
-                    ${avatarHtml}
+            <div class="profile-card">
+                <div class="profile-avatar">${avatarHtml}</div>
+                <div class="profile-name">${userName}</div>
+                <div class="profile-level">⭐ УРОВЕНЬ ${level}</div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-cell">
+                    <div class="stat-num">${Math.floor(balance)}</div>
+                    <div class="stat-label">БАЛАНС</div>
                 </div>
-                <div class="profile-info">
-                    <h3>${userName}</h3>
-                    <div class="level-badge">⭐ Уровень ${Math.floor(winStreak / 10) + 1}</div>
+                <div class="stat-cell">
+                    <div class="stat-num">${winStreak}</div>
+                    <div class="stat-label">ВИНСТРИК</div>
+                </div>
+                <div class="stat-cell">
+                    <div class="stat-num">${currentRound}</div>
+                    <div class="stat-label">РАУНДОВ</div>
                 </div>
             </div>
-            <div class="stats-card">
-                <div class="stat-card">
-                    <div class="value">${Math.floor(balance)}</div>
-                    <div class="label">БАЛАНС</div>
-                </div>
-                <div class="stat-card">
-                    <div class="value">${winStreak}</div>
-                    <div class="label">ВИНСТРИК</div>
-                </div>
-                <div class="stat-card">
-                    <div class="value">${currentRound}</div>
-                    <div class="label">РАУНДОВ</div>
-                </div>
-            </div>
-            <div class="referral-section">
+            <div class="referral-block">
                 <div class="referral-title">🤝 РЕФЕРАЛЫ</div>
                 <div class="referral-stats">
-                    <div class="stat-card">
+                    <div class="referral-stat">
                         <div class="value">${referralCount}</div>
                         <div class="label">ПРИГЛАШЕНО</div>
                     </div>
-                    <div class="stat-card">
+                    <div class="referral-stat">
                         <div class="value">${referralEarnings}</div>
                         <div class="label">ЗАРАБОТАНО ⭐</div>
                     </div>
                 </div>
-                <button class="referral-btn" id="inviteFriendsBtn">🏆 ПРИГЛАСИТЬ ДРУЗЕЙ</button>
-                <button class="copy-btn" id="copyReferralBtn">📋 КОПИРОВАТЬ ССЫЛКУ</button>
-                <div style="font-size: 0.6rem; color: #5A6E8A; text-align: center; margin-top: 12px;">
-                    Приглашай друзей и получай 10% от их выигрышей!
-                </div>
+                <button class="invite-btn" id="inviteBtn">🏆 ПРИГЛАСИТЬ ДРУЗЕЙ</button>
+                <button class="copy-link-btn" id="copyLinkBtn">📋 КОПИРОВАТЬ ССЫЛКУ</button>
+                <div class="referral-hint">Приглашай друзей и получай 10% от их выигрышей!</div>
             </div>
         `;
-        
-        document.getElementById('inviteFriendsBtn')?.addEventListener('click', () => {
-            copyReferralLink();
-        });
-        document.getElementById('copyReferralBtn')?.addEventListener('click', () => {
-            copyReferralLink();
-        });
+        document.getElementById('inviteBtn')?.addEventListener('click', () => copyReferralLink());
+        document.getElementById('copyLinkBtn')?.addEventListener('click', () => copyReferralLink());
     }
     
-    // ------------------- ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК -------------------
+    // ========== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ==========
     const navItems = document.querySelectorAll('.nav-item');
     let currentTab = 'coin';
     
@@ -939,13 +850,8 @@
             historySection.style.display = 'block';
             document.querySelector('.multiplier-strip-wrapper').style.display = 'block';
             dynamicContent.style.display = 'none';
-            if (riskActive) {
-                actionButtons.style.display = 'flex';
-                playBtn.style.display = 'none';
-            } else {
-                actionButtons.style.display = 'none';
-                playBtn.style.display = 'block';
-            }
+            actionButtons.style.display = riskActive ? 'flex' : 'none';
+            playBtn.style.display = riskActive ? 'none' : 'block';
         } else {
             centerStats.style.display = 'none';
             mainCoinDiv.style.display = 'none';
@@ -962,10 +868,10 @@
     function renderLeadersTab() {
         showGameUI(false);
         dynamicContent.innerHTML = `
-            <div style="display:flex; flex-direction:column; align-items:center; justify-content:flex-start; height:100%; gap:20px; padding-top:20px;">
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; gap:20px;">
                 <div style="font-size:3rem;">🏆</div>
                 <div style="font-size:1.2rem; color:white;">Таблица лидеров</div>
-                <div style="background:#1A2438; padding:16px; border-radius:30px; width:100%; text-align:center;">
+                <div style="background:#1A2438; padding:20px; border-radius:30px; width:100%;">
                     <div>1. Игрок_01 — 25000 ⭐</div>
                     <div>2. Игрок_02 — 18000 ⭐</div>
                     <div>3. Игрок_03 — 12000 ⭐</div>
@@ -976,21 +882,17 @@
         `;
     }
     
-    function renderCoinTab() {
-        showGameUI(true);
-    }
+    function renderCoinTab() { showGameUI(true); }
     
     function switchTab(tab) {
         if (riskActive && tab !== 'coin') {
-            addHistory(`⚠️ Сначала закончи игру (забери или прокрути)`, 'loss');
+            addHistory(`⚠️ Сначала закончи игру`, 'loss');
             return;
         }
         currentTab = tab;
         navItems.forEach(item => {
-            if (item.dataset.tab === tab) item.classList.add('active');
-            else item.classList.remove('active');
+            item.classList.toggle('active', item.dataset.tab === tab);
         });
-        
         if (tab === 'coin') renderCoinTab();
         else if (tab === 'leaders') renderLeadersTab();
         else if (tab === 'my') renderProfileTab();
@@ -1000,23 +902,12 @@
         item.addEventListener('click', () => switchTab(item.dataset.tab));
     });
     
-    // ------------------- СОХРАНЕНИЕ -------------------
     function saveGame() {
-        const save = {
-            balance: balance,
-            currentRound: currentRound,
-            winStreak: winStreak,
-            bet: bet,
-            userChoice: userChoice,
-            riskActive: riskActive,
-            currentRiskStep: currentRiskStep,
-            currentRiskMultiplier: currentRiskMultiplier,
-            currentRiskStake: currentRiskStake,
-            referralCount: referralCount,
-            referralEarnings: referralEarnings
-        };
-        localStorage.setItem('StarsFlipSave', JSON.stringify(save));
-        saveReferralStats();
+        localStorage.setItem('StarsFlipSave', JSON.stringify({
+            balance, currentRound, winStreak, bet, userChoice,
+            riskActive, currentRiskStep, currentRiskMultiplier, currentRiskStake,
+            referralCount, referralEarnings
+        }));
     }
     
     function loadGame() {
@@ -1055,7 +946,7 @@
         renderCoinTab();
     }
     
-    // ------------------- СОБЫТИЯ -------------------
+    // СОБЫТИЯ
     document.getElementById('decBet').addEventListener('click', () => {
         bet = Math.max(1, bet - 10);
         updateBetUI();
@@ -1082,15 +973,11 @@
     riskBtn.addEventListener('click', riskFlip);
     
     document.getElementById('howBtn').addEventListener('click', () => {
-        alert(`⭐ STARSFLIP — игра на монетке\n\nПРАВИЛА:\n1. Сделай ставку и выбери ОРЁЛ или РЕШКА\n2. Если угадал → можешь ЗАБРАТЬ или КРУТИТЬ ДАЛЬШЕ\n3. Всего 12 шагов, максимальный множитель x${multipliersList[11]}\n4. При проигрыше теряешь всё\n\nИграй честно, удачи!`);
+        alert(`⭐ STARSFLIP\n\n1. Сделай ставку и выбери ОРЁЛ или РЕШКА\n2. Если угадал → ЗАБРАТЬ или КРУТИТЬ ДАЛЬШЕ\n3. 12 шагов, максимальный множитель x${multipliersList[11]}\n4. При проигрыше теряешь всё\n\nУдачи!`);
     });
     
     loadGame();
-    
-    // Запуск Telegram WebApp
-    if (tg) {
-        tg.ready();
-    }
+    if (tg) tg.ready();
 </script>
 </body>
 </html>
